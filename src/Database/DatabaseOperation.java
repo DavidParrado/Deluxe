@@ -4,6 +4,7 @@ import Entities.Categoria;
 import Entities.Marca;
 import Entities.Producto;
 import Entities.Usuario;
+import Factories.EntityFactory;
 
 import java.util.Scanner;
 
@@ -14,10 +15,11 @@ public class DatabaseOperation {
   Categoria categoria;
 
   public DatabaseOperation() {
-    usuario = new Usuario();
-    marca = new Marca();
-    producto = new Producto();
-    categoria = new Categoria();
+    EntityFactory entityFactory = new EntityFactory();
+    usuario = entityFactory.createUsuarioEntity();
+    marca = entityFactory.createMarcaEntity();
+    producto = entityFactory.createProductoEntity();
+    categoria = entityFactory.createCategoriaEntity();
   }
   public void find() {
     Scanner sc = new Scanner(System.in);
