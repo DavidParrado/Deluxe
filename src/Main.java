@@ -6,7 +6,7 @@ import java.util.Scanner;
 public class Main {
   public static void main(String[] args) {
     try {
-      // Singleton ✅, Adapter ✅, Factory method ❌, Abstract method ❌
+      // Singleton ✅, Adapter ✅, Factory method ✅, Abstract method ❌
       DatabaseConnection databaseConnection = DatabaseConnection.getInstance();
       DatabaseOperation operation = new DatabaseOperation();
 
