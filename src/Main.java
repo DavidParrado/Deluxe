@@ -1,7 +1,4 @@
-import Database.DatabaseConnection;
-import Database.DatabaseOperation;
-
-import java.util.Scanner;
+import Gui.MainGUI;
 
 public class Main {
   public static void main(String[] args) {
@@ -9,8 +6,6 @@ public class Main {
       // Singleton ✅, Adapter ✅, Factory method ✅, Abstract method ❌
       MainGUI gui = new MainGUI();
       gui.setVisible(true);
-//      MainWindow gui = new MainWindow();
-//      gui.setVisible(true);
 //      DatabaseConnection databaseConnection = DatabaseConnection.getInstance();
 //      DatabaseOperation operation = new DatabaseOperation();
 //
