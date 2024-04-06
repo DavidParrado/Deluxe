@@ -1,10 +1,17 @@
 package Gui;
 
+import Entities.Marca;
+import Factories.EntityFactory;
+import Helpers.SerialHelper;
+import Params.MarcaParams;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Vector;
 
 public class MarcaWindow extends JFrame {
@@ -19,11 +26,13 @@ public class MarcaWindow extends JFrame {
   private JTextField nombreField;
   private JTextField descripcionField;
   private JTextField paisField;
+  private EntityFactory entityFactory = new EntityFactory();
+  private Marca marca = entityFactory.createMarcaEntity();
 
   public MarcaWindow() {
     setTitle("Marca Management");
     setSize(800, 600);
-    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    // setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setLocationRelativeTo(null);
 
     JPanel panel = new JPanel();
@@ -122,28 +131,29 @@ public class MarcaWindow extends JFrame {
 
   // Method to initialize the table with sample data
   private void initTable() {
+    Vector<Vector<Object>> data = new Vector<>();
     Vector<String> columnNames = new Vector<>();
     columnNames.add("ID");
     columnNames.add("Nombre");
     columnNames.add("Descripción");
     columnNames.add("País");
 
-    Vector<Vector<String>> data = new Vector<>();
-    Vector<String> row1 = new Vector<>();
-    row1.add("1");
-    row1.add("Brand 1");
-    row1.add("Description 1");
-    row1.add("Country 1");
-    Vector<String> row2 = new Vector<>();
-    row2.add("2");
-    row2.add("Brand 2");
-    row2.add("Description 2");
-    row2.add("Country 2");
+    ResultSet marcas = marca.find();
 
-    data.add(row1);
-    data.add(row2);
-
-    tableModel.setDataVector(data, columnNames);
+    try {
+      while (marcas.next()) {
+        Vector<Object> row = new Vector<>();
+        row.add(marcas.getObject("id_marca"));
+        row.add(marcas.getObject("nombre"));
+        row.add(marcas.getObject("descripcion"));
+        row.add(marcas.getObject("pais"));
+        data.add(row);
+      }
+      tableModel.setDataVector(data, columnNames);
+      marcas.close();
+    } catch (SQLException e) {
+      System.out.println(e.getMessage());
+    }
   }
 
   // Method to add a new marca to the table
@@ -154,13 +164,27 @@ public class MarcaWindow extends JFrame {
 
     // Validate input fields
     if (nombre.isEmpty() || descripcion.isEmpty() || pais.isEmpty()) {
-      JOptionPane.showMessageDialog(this, "All fields are required", "Error", JOptionPane.ERROR_MESSAGE);
+      displayError("All fields are required");
+      return;
+    }
+
+    int id = new SerialHelper().getSerial("id_marca", "marca");
+
+    if(id == 0 ) {
+      displayError("No se pudo ejecutar esta operacion vuelve a intentarlo");
+      return;
+    }
+
+    try {
+      marca.create(new MarcaParams(nombre,descripcion,pais));
+    } catch (Exception e) {
+      displayError("No se pudo insertar ningun dato, vuelve a intentarlo");
       return;
     }
 
     // Add new row to the table
     Vector<String> row = new Vector<>();
-    row.add(""); // Empty ID, to be filled by database
+    row.add(id+""); // Empty ID, to be filled by database
     row.add(nombre);
     row.add(descripcion);
     row.add(pais);
@@ -182,7 +206,6 @@ public class MarcaWindow extends JFrame {
     }
 
     // Retrieve data from the selected row
-    String id = tableModel.getValueAt(selectedRow, 0).toString();
     String nombre = tableModel.getValueAt(selectedRow, 1).toString();
     String descripcion = tableModel.getValueAt(selectedRow, 2).toString();
     String pais = tableModel.getValueAt(selectedRow, 3).toString();
@@ -195,20 +218,29 @@ public class MarcaWindow extends JFrame {
     saveButton.setVisible(true);
     // Display a dialog or switch the UI to edit mode
     // You can display an "Update" button for the user to save the changes
-    // Or directly update the row when the user finishes editing
   }
 
   private void saveMarca() {
     int selectedRow = table.getSelectedRow();
     if (selectedRow == -1) {
-      JOptionPane.showMessageDialog(MarcaWindow.this, "Please select a row to edit", "Error", JOptionPane.ERROR_MESSAGE);
+      displayError("Please select a row to edit");
       return;
     }
+
+    // Retrieve id to update expected row
+    String id = tableModel.getValueAt(selectedRow,0).toString();
 
     // Retrieve modified data from input fields
     String nombre = nombreField.getText();
     String descripcion = descripcionField.getText();
     String pais = paisField.getText();
+
+    try {
+      marca.update(id, new MarcaParams(nombre,descripcion,pais));
+    } catch (Exception e) {
+      displayError("No se pudo completar la operacion intentalo de nuevo");
+      return;
+    }
 
     // Update the corresponding row in the table with the new data
     tableModel.setValueAt(nombre, selectedRow, 1);
@@ -228,13 +260,22 @@ public class MarcaWindow extends JFrame {
   private void deleteMarca() {
     int selectedRow = table.getSelectedRow();
     if (selectedRow == -1) {
-      JOptionPane.showMessageDialog(MarcaWindow.this, "Please select a row to delete", "Error", JOptionPane.ERROR_MESSAGE);
+      displayError("Please select a row to delete");
       return;
     }
+
+    // Retrieve id to update expected row
+    String id = tableModel.getValueAt(selectedRow,0).toString();
 
     // Display confirmation dialog before deleting
     int confirm = JOptionPane.showConfirmDialog(MarcaWindow.this, "Are you sure you want to delete this marca?", "Confirmation", JOptionPane.YES_NO_OPTION);
     if (confirm == JOptionPane.YES_OPTION) {
+      try {
+        marca.delete(id);
+      } catch (Exception e) {
+        displayError("No se pudo completar la operacion, intentalo de nuevo");
+        return;
+      }
       // Remove the selected row from the table model
       tableModel.removeRow(selectedRow);
 
@@ -246,6 +287,10 @@ public class MarcaWindow extends JFrame {
       // Display success message
       JOptionPane.showMessageDialog(MarcaWindow.this, "Marca deleted successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
     }
+  }
+
+  private void displayError(String message) {
+    JOptionPane.showMessageDialog(MarcaWindow.this, message, "Error", JOptionPane.ERROR_MESSAGE);
   }
 
   public static void main(String[] args) {

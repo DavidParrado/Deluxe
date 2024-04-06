@@ -11,9 +11,9 @@ public class DatabaseConnection {
   private DatabaseConnection() {
     try {
       PGSimpleDataSource ds = new PGSimpleDataSource();
-      ds.setUrl("jdbc:postgresql://modest-chum-13898.7tt.aws-us-east-1.cockroachlabs.cloud:26257/deluxe");
+      ds.setUrl("jdbc:postgresql://localhost:5432/ecommerce"); // jdbc:postgresql://modest-chum-13898.7tt.aws-us-east-1.cockroachlabs.cloud:26257/deluxe
       ds.setUser("juan");
-      ds.setPassword("Al3IMQ8NHtGnVoX_jR3ytw");
+      ds.setPassword("123456"); // Al3IMQ8NHtGnVoX_jR3ytw
       connection = ds.getConnection();
     } catch (SQLException e) {
       throw new RuntimeException(e);
