@@ -210,12 +210,7 @@ public class UsuarioWindow extends JFrame {
     tableModel.addRow(row);
 
     // Clear input fields
-    nombreField.setText("");
-    apellidoField.setText("");
-    correoField.setText("");
-    contrasenaField.setText("");
-    direccionField.setText("");
-    telefonoField.setText("");
+    clearInputFields();
 
     saveButton.setVisible(false);
 
@@ -288,12 +283,7 @@ public class UsuarioWindow extends JFrame {
     tableModel.setValueAt(telefono, selectedRow, 5);
 
     // Clear input fields
-    nombreField.setText("");
-    apellidoField.setText("");
-    direccionField.setText("");
-    telefonoField.setText("");
-    contrasenaField.setText("");
-    correoField.setText("");
+    clearInputFields();
 
     saveButton.setVisible(false);
     // Display success message
@@ -326,12 +316,7 @@ public class UsuarioWindow extends JFrame {
       tableModel.removeRow(selectedRow);
 
       // Clear input fields
-      nombreField.setText("");
-      apellidoField.setText("");
-      direccionField.setText("");
-      telefonoField.setText("");
-      contrasenaField.setText("");
-      correoField.setText("");
+      clearInputFields();
 
       // Display success message
       JOptionPane.showMessageDialog(UsuarioWindow.this, "Usuario deleted successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -341,6 +326,15 @@ public class UsuarioWindow extends JFrame {
 
   private void displayError(String message) {
     JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+  }
+
+  private void clearInputFields() {
+    nombreField.setText("");
+    apellidoField.setText("");
+    direccionField.setText("");
+    telefonoField.setText("");
+    contrasenaField.setText("");
+    correoField.setText("");
   }
 
   public static void main(String[] args) {
