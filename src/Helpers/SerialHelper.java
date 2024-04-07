@@ -30,7 +30,7 @@ public class SerialHelper {
       return maxId + 1;
     } catch(SQLException e) {
       System.out.println(e.getMessage());
-      return 0;
+      return -1;
     }
   }
 

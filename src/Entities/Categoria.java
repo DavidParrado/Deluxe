@@ -15,7 +15,7 @@ public class Categoria implements Entity<CategoriaParams> {
   public ResultSet find() {
     try {
       Statement statement = connection.createStatement();
-      ResultSet categorias = statement.executeQuery("SELECT * FROM categoria");
+      ResultSet categorias = statement.executeQuery("SELECT * FROM categoria order by id_categoria");
       return categorias;
     } catch(SQLException e) {
       e.printStackTrace();

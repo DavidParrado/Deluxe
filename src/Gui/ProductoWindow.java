@@ -191,7 +191,7 @@ public class ProductoWindow extends JFrame {
 
     int id = new SerialHelper().getSerial("id_producto", "producto");
 
-    if(id == 0) {
+    if(id < 0) {
       displayError("No se pudo ejecutar esta operacion vuelve a intentarlo");
       return;
     }
@@ -201,6 +201,7 @@ public class ProductoWindow extends JFrame {
       producto.create(params);
     } catch (Exception e) {
       displayError(e.getMessage());
+      return;
     }
     // Add new row to the table
     Vector<String> row = new Vector<>();

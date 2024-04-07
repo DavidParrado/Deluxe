@@ -170,7 +170,7 @@ public class MarcaWindow extends JFrame {
 
     int id = new SerialHelper().getSerial("id_marca", "marca");
 
-    if(id == 0 ) {
+    if(id < 0 ) {
       displayError("No se pudo ejecutar esta operacion vuelve a intentarlo");
       return;
     }
@@ -238,7 +238,7 @@ public class MarcaWindow extends JFrame {
     try {
       marca.update(id, new MarcaParams(nombre,descripcion,pais));
     } catch (Exception e) {
-      displayError("No se pudo completar la operacion intentalo de nuevo");
+      displayError(e.getMessage());
       return;
     }
 
@@ -273,7 +273,7 @@ public class MarcaWindow extends JFrame {
       try {
         marca.delete(id);
       } catch (Exception e) {
-        displayError("No se pudo completar la operacion, intentalo de nuevo");
+        displayError(e.getMessage());
         return;
       }
       // Remove the selected row from the table model

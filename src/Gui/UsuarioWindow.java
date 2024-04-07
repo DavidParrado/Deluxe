@@ -188,7 +188,7 @@ public class UsuarioWindow extends JFrame {
 
     int id = new SerialHelper().getSerial("id_usuario", "usuario");
 
-    if(id == 0) {
+    if(id < 0) {
       displayError("No se pudo ejecutar esta operacion vuelve a intentarlo");
       return;
     }

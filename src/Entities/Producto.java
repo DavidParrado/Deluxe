@@ -19,7 +19,7 @@ public class Producto implements Entity<ProductoParams> {
   public ResultSet find() {
     try {
       Statement statement = connection.createStatement();
-      ResultSet productos = statement.executeQuery("SELECT * FROM producto");
+      ResultSet productos = statement.executeQuery("SELECT * FROM producto order by id_producto");
       return productos;
     } catch(Exception e) {
       System.out.print(e);
@@ -46,7 +46,6 @@ public class Producto implements Entity<ProductoParams> {
       statement.executeUpdate();
 
     } catch (SQLException e) {
-      System.out.println(e.getMessage());
       throw new Exception(e.getMessage());
     }
   }
