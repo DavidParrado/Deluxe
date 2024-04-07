@@ -35,7 +35,8 @@ public class MainGUI extends JFrame {
     CategoriaButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        JOptionPane.showMessageDialog(null, "Categoria button clicked");
+        CategoriaWindow categoriaWindow = new CategoriaWindow();
+        categoriaWindow.setVisible(true);
       }
     });
 
