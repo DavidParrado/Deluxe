@@ -42,7 +42,8 @@ public class MainGUI extends JFrame {
     ProductoButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        JOptionPane.showMessageDialog(null, "Producto button clicked");
+        ProductoWindow productoWindow = new ProductoWindow();
+        productoWindow.setVisible(true);
       }
     });
 
