@@ -73,7 +73,8 @@ public class MarcaWindow extends JFrame {
     headerPanel.add(titleLabel, BorderLayout.NORTH);
 
     // Input fields for adding new marca
-    JPanel inputPanel = new JPanel(new GridLayout(3, 2));
+    JPanel inputPanel = new JPanel(new GridLayout(3, 2,10,5));
+    inputPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
     inputPanel.add(new JLabel("Nombre:"));
     nombreField = new JTextField();
     inputPanel.add(nombreField);

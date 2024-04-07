@@ -63,7 +63,8 @@ public class CategoriaWindow extends JFrame {
     titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
     headerPanel.add(titleLabel, BorderLayout.NORTH);
 
-    JPanel inputPanel = new JPanel(new GridLayout(2, 2));
+    JPanel inputPanel = new JPanel(new GridLayout(2, 2, 10, 5));
+    inputPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
     inputPanel.add(new JLabel("Nombre:"));
     nombreField = new JTextField();
     inputPanel.add(nombreField);
