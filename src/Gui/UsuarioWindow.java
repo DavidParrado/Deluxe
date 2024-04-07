@@ -318,7 +318,7 @@ public class UsuarioWindow extends JFrame {
         // Delete the usuario using the provided id
         usuario.delete(id);
       } catch (Exception e) {
-        displayError("An error occurred while deleting the usuario");
+        displayError(e.getMessage());
         return;
       }
 
@@ -330,6 +330,7 @@ public class UsuarioWindow extends JFrame {
       apellidoField.setText("");
       direccionField.setText("");
       telefonoField.setText("");
+      contrasenaField.setText("");
       correoField.setText("");
 
       // Display success message
