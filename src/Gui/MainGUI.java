@@ -27,7 +27,8 @@ public class MainGUI extends JFrame {
     UsuarioButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        JOptionPane.showMessageDialog(null, "Usuario button clicked");
+        UsuarioWindow usuarioWindow = new UsuarioWindow();
+        usuarioWindow.setVisible(true);
       }
     });
 
@@ -48,8 +49,6 @@ public class MainGUI extends JFrame {
     MarcaButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-//        JOptionPane.showMessageDialog(null, "Marca button clicked");
-        // Instantiate and display MarcaWindow
         MarcaWindow marcaWindow = new MarcaWindow();
         marcaWindow.setVisible(true);
       }

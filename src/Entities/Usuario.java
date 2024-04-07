@@ -5,7 +5,6 @@ import Helpers.SerialHelper;
 import Params.UsuarioParams;
 
 import java.sql.*;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,7 +18,7 @@ public class Usuario implements Entity<UsuarioParams> {
   public ResultSet find() {
     try {
       Statement statement = connection.createStatement();
-      ResultSet usuarios = statement.executeQuery("SELECT * FROM usuario");
+      ResultSet usuarios = statement.executeQuery("SELECT * FROM usuario order by id_usuario");
       return usuarios;
     } catch (SQLException e) {
       System.out.print(e.getMessage());
@@ -33,6 +32,7 @@ public class Usuario implements Entity<UsuarioParams> {
 
       this.validarEmail(params.correo);
       this.validarContra(params.contrasena);
+      this.validarTelefono(params.telefono);
 
       new SerialHelper().getSerial("id_usuario", "usuario");
 
@@ -48,33 +48,31 @@ public class Usuario implements Entity<UsuarioParams> {
       statement.executeUpdate();
 
     } catch(Exception e) {
-      System.out.print(e.getMessage());
-      throw new Exception(e);
+      throw new Exception(e.getMessage());
     }
   }
 
   @Override
   public void update(String id, UsuarioParams params) throws Exception {
     try {
+      if( params.contrasena.length() > 0 ) this.updateContra(id,params.contrasena);
       this.validarEmail(params.correo);
-      this.validarContra(params.contrasena);
+      this.validarTelefono(params.telefono);
 
-      String sql = "UPDATE usuario SET correo = ?, contrasena = ?, nombre = ?, apellido = ?, direccion = ?, telefono = ? WHERE id_usuario = ?";
+      String sql = "UPDATE usuario SET correo = ?, nombre = ?, apellido = ?, direccion = ?, telefono = ? WHERE id_usuario = ?";
       PreparedStatement statement = connection.prepareStatement(sql);
 
       statement.setString(1,params.correo);
-      statement.setString(2,params.contrasena);
-      statement.setString(3,params.nombre);
-      statement.setString(4,params.apellido);
-      statement.setString(5,params.direccion);
-      statement.setString(6,params.telefono);
-      statement.setInt(7, Integer.parseInt(id));
+      statement.setString(2,params.nombre);
+      statement.setString(3,params.apellido);
+      statement.setString(4,params.direccion);
+      statement.setString(5,params.telefono);
+      statement.setInt(6, Integer.parseInt(id));
 
       statement.executeUpdate();
 
     } catch(Exception e){
-      System.out.println(e.getMessage());
-      throw new Exception(e);
+      throw new Exception(e.getMessage());
     }
   }
 
@@ -88,8 +86,7 @@ public class Usuario implements Entity<UsuarioParams> {
       statement.executeUpdate();
 
     } catch (SQLException e) {
-      System.out.println("Error al eliminar el usuario: " + e.getMessage());
-      throw new Exception(e);
+      throw new Exception(e.getMessage());
     }
   }
 
@@ -101,6 +98,27 @@ public class Usuario implements Entity<UsuarioParams> {
 
   public void validarContra(String contra) throws Exception {
     if(contra.length() < 8) throw new Exception("Contraseña debe tener al menos 8 cáracteres");
+  }
+
+  public void validarTelefono(String telefono) throws Exception {
+    Pattern telefonoRegex = Pattern.compile("^[0-9]{10}$");
+    Matcher matcher = telefonoRegex.matcher(telefono);
+    if(!matcher.matches()) throw new Exception("Telefono debe tener 10 digitos");
+  }
+
+  private void updateContra(String id, String contra) throws Exception {
+    try {
+      this.validarContra(contra);
+      String sql = "UPDATE usuario SET contrasena = ? WHERE id_usuario = ?";
+      PreparedStatement statement = connection.prepareStatement(sql);
+      statement.setString(1,contra);
+      statement.setInt(2,Integer.parseInt(id));
+      statement.executeUpdate();
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    } catch (Exception e) {
+      throw new Exception(e.getMessage());
+    }
   }
 
 }

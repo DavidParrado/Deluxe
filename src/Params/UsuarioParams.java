@@ -1,7 +1,6 @@
 package Params;
 
 public class UsuarioParams {
-  public String id_usuario;
   public String correo;
   public String contrasena;
   public String nombre;
