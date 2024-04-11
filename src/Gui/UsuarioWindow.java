@@ -86,7 +86,7 @@ public class UsuarioWindow extends JFrame {
     correoField = new JTextField();
     inputPanel.add(correoField);
     inputPanel.add(new JLabel("Contraseña:"));
-    contrasenaField = new JTextField();
+    contrasenaField = new JPasswordField();
     inputPanel.add(contrasenaField);
     inputPanel.add(new JLabel("Dirección:"));
     direccionField = new JTextField();
