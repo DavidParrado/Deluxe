@@ -2,6 +2,7 @@ package Gui;
 
 import Entities.Producto;
 import Factories.EntityFactory;
+import Helpers.PdfGenerator;
 import Helpers.SerialHelper;
 import Params.ProductoParams;
 
@@ -20,6 +21,7 @@ public class ProductoWindow extends JFrame {
   private JButton addButton;
   private JButton editButton;
   private JButton deleteButton;
+  private JButton pdfButton;
   private JButton saveButton;
 
   private JTextField nombreField;
@@ -33,6 +35,7 @@ public class ProductoWindow extends JFrame {
 
   private EntityFactory entityFactory = new EntityFactory();
   private Producto producto = entityFactory.createProductoEntity();
+  private PdfGenerator pdfGenerator = new PdfGenerator();
 
   public ProductoWindow() {
     setTitle("Producto Management");
@@ -55,11 +58,13 @@ public class ProductoWindow extends JFrame {
     addButton = new JButton("Add");
     editButton = new JButton("Edit");
     deleteButton = new JButton("Delete");
+    pdfButton = new JButton("Descargar PDF");
     saveButton = new JButton("Save");
     saveButton.setVisible(false);
     buttonPanel.add(addButton);
     buttonPanel.add(editButton);
     buttonPanel.add(deleteButton);
+    buttonPanel.add(pdfButton);
     buttonPanel.add(saveButton);
     mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
@@ -114,6 +119,18 @@ public class ProductoWindow extends JFrame {
       @Override
       public void actionPerformed(ActionEvent e) {
         editProducto();
+      }
+    });
+    pdfButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        ResultSet productos = producto.find();
+        String[] headers = {"ID", "Nombre", "Descripcion", "Precio", "Talla", "Color", "Cantidad", "URL", "ID Marca"};
+        String [] fields = { "id_producto", "nombre", "descripcion", "precio", "talla", "color", "cantidad", "url_imagen", "id_marca" };
+        String filename = "productos";
+
+        pdfGenerator.downloadPdf(productos,headers,fields, filename);
+        displayMessage("Pdf generado correctamente.");
       }
     });
 
@@ -339,6 +356,10 @@ public class ProductoWindow extends JFrame {
 
   private void displayError(String message) {
     JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+  }
+
+  private void displayMessage(String message) {
+    JOptionPane.showMessageDialog(this, message, "Success", JOptionPane.INFORMATION_MESSAGE);
   }
 
   private void updateTable() {

@@ -1,6 +1,8 @@
 package Gui;
 
 import Entities.Categoria;
+import Factories.EntityFactory;
+import Helpers.PdfGenerator;
 import Helpers.SerialHelper;
 import Params.CategoriaParams;
 
@@ -19,12 +21,15 @@ public class CategoriaWindow extends JFrame {
   private JButton addButton;
   private JButton editButton;
   private JButton deleteButton;
+  private JButton pdfButton;
   private JButton saveButton;
 
   // Input fields for new categoria
   private JTextField nombreField;
   private JTextField descripcionField;
-  private Categoria categoria;
+  private EntityFactory entityFactory = new EntityFactory();
+  private Categoria categoria = entityFactory.createCategoriaEntity();
+  private PdfGenerator pdfGenerator = new PdfGenerator();
 
   public CategoriaWindow() {
     setTitle("Categoria Management");
@@ -47,11 +52,13 @@ public class CategoriaWindow extends JFrame {
     addButton = new JButton("Add");
     editButton = new JButton("Edit");
     deleteButton = new JButton("Delete");
+    pdfButton = new JButton("Descargar PDF");
     saveButton = new JButton("Save");
     saveButton.setVisible(false);
     buttonPanel.add(addButton);
     buttonPanel.add(editButton);
     buttonPanel.add(deleteButton);
+    buttonPanel.add(pdfButton);
     buttonPanel.add(saveButton);
     mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
@@ -88,6 +95,19 @@ public class CategoriaWindow extends JFrame {
       @Override
       public void actionPerformed(ActionEvent e) {
         editCategoria();
+      }
+    });
+
+    pdfButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        ResultSet categorias = categoria.find();
+        String[] headers = {"ID", "Nombre", "Descripcion" };
+        String [] fields = { "id_categoria", "nombre", "descripcion" };
+        String filename = "categorias";
+
+        pdfGenerator.downloadPdf(categorias,headers,fields, filename);
+        displayMessage("Pdf generado correctamente.");
       }
     });
 
@@ -255,6 +275,10 @@ public class CategoriaWindow extends JFrame {
 
   private void displayError(String message) {
     JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+  }
+
+  private void displayMessage(String message) {
+    JOptionPane.showMessageDialog(this, message, "Success", JOptionPane.INFORMATION_MESSAGE);
   }
 
   public static void main(String[] args) {

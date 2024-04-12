@@ -2,6 +2,7 @@ package Gui;
 
 import Entities.Marca;
 import Factories.EntityFactory;
+import Helpers.PdfGenerator;
 import Helpers.SerialHelper;
 import Params.MarcaParams;
 
@@ -20,6 +21,7 @@ public class MarcaWindow extends JFrame {
   private JButton addButton;
   private JButton editButton;
   private JButton deleteButton;
+  private JButton pdfButton;
   private JButton saveButton;
 
   // Input fields for new marca
@@ -28,6 +30,7 @@ public class MarcaWindow extends JFrame {
   private JTextField paisField;
   private EntityFactory entityFactory = new EntityFactory();
   private Marca marca = entityFactory.createMarcaEntity();
+  private PdfGenerator pdfGenerator = new PdfGenerator();
 
   public MarcaWindow() {
     setTitle("Marca Management");
@@ -54,11 +57,13 @@ public class MarcaWindow extends JFrame {
     addButton = new JButton("Add");
     editButton = new JButton("Edit");
     deleteButton = new JButton("Delete");
+    pdfButton = new JButton("Descargar PDF");
     saveButton = new JButton("Save");
     saveButton.setVisible(false);
     buttonPanel.add(addButton);
     buttonPanel.add(editButton);
     buttonPanel.add(deleteButton);
+    buttonPanel.add(pdfButton);
     buttonPanel.add(saveButton);
     mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
@@ -104,6 +109,20 @@ public class MarcaWindow extends JFrame {
       @Override
       public void actionPerformed(ActionEvent e) {
         editMarca();
+      }
+    });
+
+    // Add action listener for pdf button
+    pdfButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        ResultSet marcas = marca.find();
+        String[] headers = {"ID", "Nombre", "Descripcion", "Pais" };
+        String [] fields = { "id_marca", "nombre", "descripcion", "pais" };
+        String filename = "marcas";
+
+        pdfGenerator.downloadPdf(marcas,headers,fields, filename);
+        displayMessage("Pdf generado correctamente.");
       }
     });
 
@@ -292,6 +311,10 @@ public class MarcaWindow extends JFrame {
 
   private void displayError(String message) {
     JOptionPane.showMessageDialog(MarcaWindow.this, message, "Error", JOptionPane.ERROR_MESSAGE);
+  }
+
+  private void displayMessage(String message) {
+    JOptionPane.showMessageDialog(this, message, "Success", JOptionPane.INFORMATION_MESSAGE);
   }
 
   public static void main(String[] args) {

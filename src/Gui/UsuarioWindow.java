@@ -1,16 +1,24 @@
 package Gui;
 
 import Entities.Usuario;
+import Factories.EntityFactory;
+import Helpers.PdfGenerator;
 import Helpers.SerialHelper;
 import Params.UsuarioParams;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.sql.*;
 import java.util.Vector;
 
 public class UsuarioWindow extends JFrame {
@@ -19,6 +27,7 @@ public class UsuarioWindow extends JFrame {
   private JButton addButton;
   private JButton editButton;
   private JButton deleteButton;
+  private JButton pdfButton;
   private JButton saveButton;
 
   // Input fields for new usuario
@@ -28,7 +37,9 @@ public class UsuarioWindow extends JFrame {
   private JTextField contrasenaField;
   private JTextField direccionField;
   private JTextField telefonoField;
-  private Usuario usuario;
+  private EntityFactory entityFactory = new EntityFactory();
+  private Usuario usuario = entityFactory.createUsuarioEntity();
+  private PdfGenerator pdfGenerator = new PdfGenerator();
 
   public UsuarioWindow() {
     setTitle("Usuario Management");
@@ -55,11 +66,13 @@ public class UsuarioWindow extends JFrame {
     addButton = new JButton("Add");
     editButton = new JButton("Edit");
     deleteButton = new JButton("Delete");
+    pdfButton = new JButton("Descargar PDF");
     saveButton = new JButton("Save");
     saveButton.setVisible(false);
     buttonPanel.add(addButton);
     buttonPanel.add(editButton);
     buttonPanel.add(deleteButton);
+    buttonPanel.add(pdfButton);
     buttonPanel.add(saveButton);
     mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
@@ -113,6 +126,20 @@ public class UsuarioWindow extends JFrame {
       @Override
       public void actionPerformed(ActionEvent e) {
         editUsuario();
+      }
+    });
+
+    // Add action listener for pdf button
+    pdfButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        ResultSet usuarios = usuario.find();
+        String[] headers = {"ID", "Correo", "Nombre", "Apellido", "Direccion", "Telefono", "Rol"};
+        String [] fields = { "id_usuario", "correo", "nombre", "apellido", "direccion", "telefono", "rol" };
+        String filename = "usuarios";
+
+        pdfGenerator.downloadPdf(usuarios,headers,fields, filename);
+        displayMessage("Pdf generado correctamente.");
       }
     });
 
@@ -327,6 +354,10 @@ public class UsuarioWindow extends JFrame {
 
   private void displayError(String message) {
     JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+  }
+
+  private void displayMessage(String message) {
+    JOptionPane.showMessageDialog(this, message, "Success", JOptionPane.INFORMATION_MESSAGE);
   }
 
   private void clearInputFields() {
