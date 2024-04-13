@@ -2,6 +2,7 @@ package Gui;
 
 import Entities.Usuario;
 import Factories.EntityFactory;
+import Helpers.PasswordEncryptor;
 import Helpers.PdfGenerator;
 import Helpers.SerialHelper;
 import Params.UsuarioParams;
@@ -40,6 +41,7 @@ public class UsuarioWindow extends JFrame {
   private EntityFactory entityFactory = new EntityFactory();
   private Usuario usuario = entityFactory.createUsuarioEntity();
   private PdfGenerator pdfGenerator = new PdfGenerator();
+  private PasswordEncryptor encryptor = new PasswordEncryptor();
 
   public UsuarioWindow() {
     setTitle("Usuario Management");
@@ -208,6 +210,8 @@ public class UsuarioWindow extends JFrame {
     String direccion = direccionField.getText();
     String telefono = telefonoField.getText();
 
+    String contrasenaEncriptada = encryptor.encryptPassword(contrasena);
+
     // Validate input fields
     if (nombre.isEmpty() || apellido.isEmpty() || correo.isEmpty() || contrasena.isEmpty() || direccion.isEmpty() || telefono.isEmpty()) {
       displayError("All fields are required");
@@ -221,7 +225,7 @@ public class UsuarioWindow extends JFrame {
       return;
     }
     try {
-      usuario.create(new UsuarioParams(correo, contrasena, nombre, apellido, direccion, telefono, "Usuario"));
+      usuario.create(new UsuarioParams(correo, contrasenaEncriptada, nombre, apellido, direccion, telefono, "Usuario"));
     } catch (Exception e) {
       displayError(e.getMessage());
       return;
