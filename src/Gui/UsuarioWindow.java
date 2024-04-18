@@ -14,6 +14,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,6 +31,7 @@ public class UsuarioWindow extends JFrame {
   private JButton deleteButton;
   private JButton pdfButton;
   private JButton saveButton;
+  private JButton exitEditModeButton;
 
   // Input fields for new usuario
   private JTextField nombreField;
@@ -59,7 +61,20 @@ public class UsuarioWindow extends JFrame {
 
     // Table to display database rows
     tableModel = new DefaultTableModel();
-    table = new JTable(tableModel);
+    table = new JTable(tableModel) {
+      @Override
+      public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+        Component comp = super.prepareRenderer(renderer, row, column);
+        if (isRowSelected(row)) {
+          // rgb(184, 207, 229); or b8cfe5;
+          comp.setBackground(new Color(184,207,229)); // Change background color of selected row
+        } else {
+          comp.setBackground(Color.WHITE); // Reset background color for other rows
+        }
+        return comp;
+      }
+    };
+
     JScrollPane scrollPane = new JScrollPane(table);
     mainPanel.add(scrollPane, BorderLayout.CENTER);
 
@@ -71,11 +86,14 @@ public class UsuarioWindow extends JFrame {
     pdfButton = new JButton("Descargar PDF");
     saveButton = new JButton("Save");
     saveButton.setVisible(false);
+    exitEditModeButton = new JButton("Salir modo edicion");
+    exitEditModeButton.setVisible(false);
     buttonPanel.add(addButton);
     buttonPanel.add(editButton);
     buttonPanel.add(deleteButton);
     buttonPanel.add(pdfButton);
     buttonPanel.add(saveButton);
+    buttonPanel.add(exitEditModeButton);
     mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
     // Header panel for title and input
@@ -150,6 +168,14 @@ public class UsuarioWindow extends JFrame {
       @Override
       public void actionPerformed(ActionEvent e) {
         saveUsuario();
+      }
+    });
+
+    // Add action listener for save button
+    exitEditModeButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        exitEditMode();
       }
     });
 
@@ -270,9 +296,9 @@ public class UsuarioWindow extends JFrame {
     telefonoField.setText(telefono);
     correoField.setText(correo);
 
-    saveButton.setVisible(true);
-    // Display a dialog or switch the UI to edit mode
-    // You can display an "Update" button for the user to save the changes
+    // Start edit mode
+    enterEditMode();
+
   }
 
   private void saveUsuario() {
@@ -314,10 +340,9 @@ public class UsuarioWindow extends JFrame {
     tableModel.setValueAt(direccion, selectedRow, 4);
     tableModel.setValueAt(telefono, selectedRow, 5);
 
-    // Clear input fields
-    clearInputFields();
+    // Exit edit mode
+    exitEditMode();
 
-    saveButton.setVisible(false);
     // Display success message
     JOptionPane.showMessageDialog(UsuarioWindow.this, "Usuario updated successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
   }
@@ -371,6 +396,53 @@ public class UsuarioWindow extends JFrame {
     telefonoField.setText("");
     contrasenaField.setText("");
     correoField.setText("");
+  }
+
+  private void disableTable() {
+      // Disable table selection and editing
+      table.setEnabled(false);
+      table.setRowSelectionAllowed(false);
+      table.setColumnSelectionAllowed(false);
+      table.setCellSelectionEnabled(false);
+  }
+
+  private void enableTable() {
+      // Enable table selection and editing
+      table.setEnabled(true);
+      table.setRowSelectionAllowed(true);
+      table.setColumnSelectionAllowed(true);
+      table.setCellSelectionEnabled(true);
+  }
+
+  private void enterEditMode() {
+    // Disable table so the user cannot select any other row
+    disableTable();
+
+    // Disable buttons so the user cannot interact with them
+    addButton.setEnabled(false);
+    pdfButton.setEnabled(false);
+    editButton.setEnabled(false);
+    deleteButton.setEnabled(false);
+
+    // Show save and exit edit mode button
+    saveButton.setVisible(true);
+    exitEditModeButton.setVisible(true);
+  }
+
+  private void exitEditMode() {
+    // Take back normal behavior
+    enableTable();
+    addButton.setEnabled(true);
+    pdfButton.setEnabled(true);
+    editButton.setEnabled(true);
+    deleteButton.setEnabled(true);
+    // Hiding save and exit edit mode buttons
+    saveButton.setVisible(false);
+    exitEditModeButton.setVisible(false);
+    // Clearing input fields
+    clearInputFields();
+    // Removing row selection
+    table.removeRowSelectionInterval(table.getSelectedRow(),table.getSelectedRow() + 1);
   }
 
   public static void main(String[] args) {
