@@ -5,7 +5,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class PasswordEncryptor {
 
-  public String encryptPassword(String password) {
+  public  String encryptPassword(String password) {
     try {
       // Create MessageDigest instance for SHA-256
       MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -27,7 +27,7 @@ public class PasswordEncryptor {
   }
 
   public void main(String[] args) {
-    String password = "password123";
+    String password = "12345678";
     String encryptedPassword = encryptPassword(password);
     System.out.println("Encrypted Password: " + encryptedPassword);
   }
