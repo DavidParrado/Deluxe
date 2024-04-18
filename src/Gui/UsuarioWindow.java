@@ -5,6 +5,7 @@ import Factories.EntityFactory;
 import Helpers.PasswordEncryptor;
 import Helpers.PdfGenerator;
 import Helpers.SerialHelper;
+import Helpers.TableHelper;
 import Params.UsuarioParams;
 
 import com.itextpdf.text.Document;
@@ -44,6 +45,9 @@ public class UsuarioWindow extends JFrame {
   private Usuario usuario = entityFactory.createUsuarioEntity();
   private PdfGenerator pdfGenerator = new PdfGenerator();
   private PasswordEncryptor encryptor = new PasswordEncryptor();
+  private TableHelper tableHelper;
+  private JButton[] editModeButtons;
+  private JButton[] operationButtons;
 
   public UsuarioWindow() {
     setTitle("Usuario Management");
@@ -74,6 +78,7 @@ public class UsuarioWindow extends JFrame {
         return comp;
       }
     };
+    tableHelper = new TableHelper(table);
 
     JScrollPane scrollPane = new JScrollPane(table);
     mainPanel.add(scrollPane, BorderLayout.CENTER);
@@ -88,12 +93,17 @@ public class UsuarioWindow extends JFrame {
     saveButton.setVisible(false);
     exitEditModeButton = new JButton("Salir modo edicion");
     exitEditModeButton.setVisible(false);
+
+    operationButtons = new JButton[]{addButton, editButton, deleteButton, pdfButton};
+    editModeButtons = new JButton[]{saveButton, exitEditModeButton};
+
     buttonPanel.add(addButton);
     buttonPanel.add(editButton);
     buttonPanel.add(deleteButton);
     buttonPanel.add(pdfButton);
     buttonPanel.add(saveButton);
     buttonPanel.add(exitEditModeButton);
+
     mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
     // Header panel for title and input
@@ -175,7 +185,8 @@ public class UsuarioWindow extends JFrame {
     exitEditModeButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        exitEditMode();
+        tableHelper.exitEditMode(operationButtons, editModeButtons);
+        clearInputFields();
       }
     });
 
@@ -297,7 +308,7 @@ public class UsuarioWindow extends JFrame {
     correoField.setText(correo);
 
     // Start edit mode
-    enterEditMode();
+    tableHelper.enterEditMode(editModeButtons, operationButtons);
 
   }
 
@@ -341,7 +352,10 @@ public class UsuarioWindow extends JFrame {
     tableModel.setValueAt(telefono, selectedRow, 5);
 
     // Exit edit mode
-    exitEditMode();
+    tableHelper.exitEditMode(operationButtons, editModeButtons);
+
+    // Clear input fields
+    clearInputFields();
 
     // Display success message
     JOptionPane.showMessageDialog(UsuarioWindow.this, "Usuario updated successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -396,53 +410,6 @@ public class UsuarioWindow extends JFrame {
     telefonoField.setText("");
     contrasenaField.setText("");
     correoField.setText("");
-  }
-
-  private void disableTable() {
-      // Disable table selection and editing
-      table.setEnabled(false);
-      table.setRowSelectionAllowed(false);
-      table.setColumnSelectionAllowed(false);
-      table.setCellSelectionEnabled(false);
-  }
-
-  private void enableTable() {
-      // Enable table selection and editing
-      table.setEnabled(true);
-      table.setRowSelectionAllowed(true);
-      table.setColumnSelectionAllowed(true);
-      table.setCellSelectionEnabled(true);
-  }
-
-  private void enterEditMode() {
-    // Disable table so the user cannot select any other row
-    disableTable();
-
-    // Disable buttons so the user cannot interact with them
-    addButton.setEnabled(false);
-    pdfButton.setEnabled(false);
-    editButton.setEnabled(false);
-    deleteButton.setEnabled(false);
-
-    // Show save and exit edit mode button
-    saveButton.setVisible(true);
-    exitEditModeButton.setVisible(true);
-  }
-
-  private void exitEditMode() {
-    // Take back normal behavior
-    enableTable();
-    addButton.setEnabled(true);
-    pdfButton.setEnabled(true);
-    editButton.setEnabled(true);
-    deleteButton.setEnabled(true);
-    // Hiding save and exit edit mode buttons
-    saveButton.setVisible(false);
-    exitEditModeButton.setVisible(false);
-    // Clearing input fields
-    clearInputFields();
-    // Removing row selection
-    table.removeRowSelectionInterval(table.getSelectedRow(),table.getSelectedRow() + 1);
   }
 
   public static void main(String[] args) {
