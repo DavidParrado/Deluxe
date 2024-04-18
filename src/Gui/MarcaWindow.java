@@ -91,6 +91,7 @@ public class MarcaWindow extends JFrame {
     buttonPanel.add(deleteButton);
     buttonPanel.add(pdfButton);
     buttonPanel.add(saveButton);
+    buttonPanel.add(exitEditModeButton);
     mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
     // Header panel for title and input

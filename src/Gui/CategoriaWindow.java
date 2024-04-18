@@ -88,6 +88,7 @@ public class CategoriaWindow extends JFrame {
     buttonPanel.add(deleteButton);
     buttonPanel.add(pdfButton);
     buttonPanel.add(saveButton);
+    buttonPanel.add(exitEditModeButton);
     mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
     JPanel headerPanel = new JPanel(new BorderLayout());
