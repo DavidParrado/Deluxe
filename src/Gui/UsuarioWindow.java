@@ -281,8 +281,6 @@ public class UsuarioWindow extends JFrame {
     // Clear input fields
     clearInputFields();
 
-    saveButton.setVisible(false);
-
     JOptionPane.showMessageDialog(this, "Usuario added successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
   }
 
@@ -385,9 +383,6 @@ public class UsuarioWindow extends JFrame {
 
       // Remove the selected row from the table model
       tableModel.removeRow(selectedRow);
-
-      // Clear input fields
-      clearInputFields();
 
       // Display success message
       JOptionPane.showMessageDialog(UsuarioWindow.this, "Usuario deleted successfully", "Success", JOptionPane.INFORMATION_MESSAGE);

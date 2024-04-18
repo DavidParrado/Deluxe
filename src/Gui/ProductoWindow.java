@@ -4,10 +4,12 @@ import Entities.Producto;
 import Factories.EntityFactory;
 import Helpers.PdfGenerator;
 import Helpers.SerialHelper;
+import Helpers.TableHelper;
 import Params.ProductoParams;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,6 +25,7 @@ public class ProductoWindow extends JFrame {
   private JButton deleteButton;
   private JButton pdfButton;
   private JButton saveButton;
+  private JButton exitEditModeButton;
 
   private JTextField nombreField;
   private JTextField descripcionField;
@@ -36,6 +39,9 @@ public class ProductoWindow extends JFrame {
   private EntityFactory entityFactory = new EntityFactory();
   private Producto producto = entityFactory.createProductoEntity();
   private PdfGenerator pdfGenerator = new PdfGenerator();
+  private TableHelper tableHelper;
+  private JButton[] editModeButtons;
+  private JButton[] operationButtons;
 
   public ProductoWindow() {
     setTitle("Producto Management");
@@ -50,7 +56,21 @@ public class ProductoWindow extends JFrame {
     mainPanel.setLayout(new BorderLayout());
 
     tableModel = new DefaultTableModel();
-    table = new JTable(tableModel);
+    table = new JTable(tableModel) {
+      @Override
+      public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+        Component comp = super.prepareRenderer(renderer, row, column);
+        if (isRowSelected(row)) {
+          // rgb(184, 207, 229); or b8cfe5;
+          comp.setBackground(new Color(184,207,229)); // Change background color of selected row
+        } else {
+          comp.setBackground(Color.WHITE); // Reset background color for other rows
+        }
+        return comp;
+      }
+    };
+    tableHelper = new TableHelper(table);
+
     JScrollPane scrollPane = new JScrollPane(table);
     mainPanel.add(scrollPane, BorderLayout.CENTER);
 
@@ -61,6 +81,12 @@ public class ProductoWindow extends JFrame {
     pdfButton = new JButton("Descargar PDF");
     saveButton = new JButton("Save");
     saveButton.setVisible(false);
+    exitEditModeButton = new JButton("Salir modo edicion");
+    exitEditModeButton.setVisible(false);
+
+    operationButtons = new JButton[]{addButton, editButton, deleteButton, pdfButton};
+    editModeButtons = new JButton[]{saveButton, exitEditModeButton};
+
     buttonPanel.add(addButton);
     buttonPanel.add(editButton);
     buttonPanel.add(deleteButton);
@@ -138,6 +164,13 @@ public class ProductoWindow extends JFrame {
       @Override
       public void actionPerformed(ActionEvent e) {
         saveProducto();
+      }
+    });
+    exitEditModeButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        tableHelper.exitEditMode(operationButtons, editModeButtons);
+        clearInputFields();
       }
     });
 
@@ -237,7 +270,6 @@ public class ProductoWindow extends JFrame {
     // Clear input fields
     clearInputFields();
 
-    saveButton.setVisible(false);
     JOptionPane.showMessageDialog(this, "Producto added successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
   }
 
@@ -269,8 +301,8 @@ public class ProductoWindow extends JFrame {
     urlImagenField.setText(urlImagen);
     idMarcaField.setText(idMarca);
 
-    // Show the save button
-    saveButton.setVisible(true);
+    // Start edit mode
+    tableHelper.enterEditMode(editModeButtons, operationButtons);
   }
 
 
@@ -311,11 +343,11 @@ public class ProductoWindow extends JFrame {
     tableModel.setValueAt(urlImagen, selectedRow, 7);
     tableModel.setValueAt(idMarca, selectedRow, 8);
 
+    // Exit edit mode
+    tableHelper.exitEditMode(operationButtons, editModeButtons);
+
     // Clear input fields
     clearInputFields();
-
-    // Hide the save button
-    saveButton.setVisible(false);
 
     // Display success message
     JOptionPane.showMessageDialog(ProductoWindow.this, "Product updated successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -346,7 +378,6 @@ public class ProductoWindow extends JFrame {
 
       // Clear input fields
       clearInputFields();
-      saveButton.setVisible(false);
 
       // Display success message
       JOptionPane.showMessageDialog(ProductoWindow.this, "Product deleted successfully", "Success", JOptionPane.INFORMATION_MESSAGE);

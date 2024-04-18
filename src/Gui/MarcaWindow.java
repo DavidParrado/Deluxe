@@ -4,10 +4,12 @@ import Entities.Marca;
 import Factories.EntityFactory;
 import Helpers.PdfGenerator;
 import Helpers.SerialHelper;
+import Helpers.TableHelper;
 import Params.MarcaParams;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,6 +25,7 @@ public class MarcaWindow extends JFrame {
   private JButton deleteButton;
   private JButton pdfButton;
   private JButton saveButton;
+  private JButton exitEditModeButton;
 
   // Input fields for new marca
   private JTextField nombreField;
@@ -31,6 +34,9 @@ public class MarcaWindow extends JFrame {
   private EntityFactory entityFactory = new EntityFactory();
   private Marca marca = entityFactory.createMarcaEntity();
   private PdfGenerator pdfGenerator = new PdfGenerator();
+  private TableHelper tableHelper;
+  private JButton[] editModeButtons;
+  private JButton[] operationButtons;
 
   public MarcaWindow() {
     setTitle("Marca Management");
@@ -48,7 +54,21 @@ public class MarcaWindow extends JFrame {
 
     // Table to display database rows
     tableModel = new DefaultTableModel();
-    table = new JTable(tableModel);
+    table = new JTable(tableModel) {
+      @Override
+      public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+        Component comp = super.prepareRenderer(renderer, row, column);
+        if (isRowSelected(row)) {
+          // rgb(184, 207, 229); or b8cfe5;
+          comp.setBackground(new Color(184,207,229)); // Change background color of selected row
+        } else {
+          comp.setBackground(Color.WHITE); // Reset background color for other rows
+        }
+        return comp;
+      }
+    };
+    tableHelper = new TableHelper(table);
+
     JScrollPane scrollPane = new JScrollPane(table);
     mainPanel.add(scrollPane, BorderLayout.CENTER);
 
@@ -60,6 +80,12 @@ public class MarcaWindow extends JFrame {
     pdfButton = new JButton("Descargar PDF");
     saveButton = new JButton("Save");
     saveButton.setVisible(false);
+    exitEditModeButton = new JButton("Salir modo edicion");
+    exitEditModeButton.setVisible(false);
+
+    operationButtons = new JButton[]{addButton, editButton, deleteButton, pdfButton};
+    editModeButtons = new JButton[]{saveButton, exitEditModeButton};
+
     buttonPanel.add(addButton);
     buttonPanel.add(editButton);
     buttonPanel.add(deleteButton);
@@ -134,7 +160,14 @@ public class MarcaWindow extends JFrame {
       }
     });
 
-    // Add action listener for save button
+    exitEditModeButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        tableHelper.exitEditMode(operationButtons, editModeButtons);
+        clearInputFields();
+      }
+    });
+
     deleteButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -211,9 +244,7 @@ public class MarcaWindow extends JFrame {
     tableModel.addRow(row);
 
     // Clear input fields
-    nombreField.setText("");
-    descripcionField.setText("");
-    paisField.setText("");
+    clearInputFields();
 
     JOptionPane.showMessageDialog(this, "Marca added successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
   }
@@ -235,9 +266,8 @@ public class MarcaWindow extends JFrame {
     descripcionField.setText(descripcion);
     paisField.setText(pais);
 
-    saveButton.setVisible(true);
-    // Display a dialog or switch the UI to edit mode
-    // You can display an "Update" button for the user to save the changes
+    // Start edit mode
+    tableHelper.enterEditMode(editModeButtons, operationButtons);
   }
 
   private void saveMarca() {
@@ -267,12 +297,12 @@ public class MarcaWindow extends JFrame {
     tableModel.setValueAt(descripcion, selectedRow, 2);
     tableModel.setValueAt(pais, selectedRow, 3);
 
-    // Clear input fields
-    nombreField.setText("");
-    descripcionField.setText("");
-    paisField.setText("");
+    // Exit edit mode
+    tableHelper.exitEditMode(operationButtons, editModeButtons);
 
-    saveButton.setVisible(false);
+    // Clear input fields
+    clearInputFields();
+
     // Display success message
     JOptionPane.showMessageDialog(MarcaWindow.this, "Marca updated successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
   }
@@ -300,9 +330,7 @@ public class MarcaWindow extends JFrame {
       tableModel.removeRow(selectedRow);
 
       // Clear input fields
-      nombreField.setText("");
-      descripcionField.setText("");
-      paisField.setText("");
+      clearInputFields();
 
       // Display success message
       JOptionPane.showMessageDialog(MarcaWindow.this, "Marca deleted successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -315,6 +343,12 @@ public class MarcaWindow extends JFrame {
 
   private void displayMessage(String message) {
     JOptionPane.showMessageDialog(this, message, "Success", JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  private void clearInputFields() {
+    nombreField.setText("");
+    descripcionField.setText("");
+    paisField.setText("");
   }
 
   public static void main(String[] args) {
