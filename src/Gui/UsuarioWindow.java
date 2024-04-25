@@ -2,10 +2,7 @@ package Gui;
 
 import Entities.Usuario;
 import Factories.EntityFactory;
-import Helpers.PasswordEncryptor;
-import Helpers.PdfGenerator;
-import Helpers.SerialHelper;
-import Helpers.TableHelper;
+import Helpers.*;
 import Params.UsuarioParams;
 
 import com.itextpdf.text.Document;
@@ -25,6 +22,11 @@ import java.sql.*;
 import java.util.Vector;
 
 public class UsuarioWindow extends JFrame {
+  private JPanel panel;
+  private JPanel mainPanel;
+  private JPanel headerPanel;
+  private JPanel inputPanel;
+  private JPanel buttonPanel;
   private DefaultTableModel tableModel;
   private JTable table;
   private JButton addButton;
@@ -48,6 +50,8 @@ public class UsuarioWindow extends JFrame {
   private TableHelper tableHelper;
   private JButton[] editModeButtons;
   private JButton[] operationButtons;
+  private JLabel titleLabel;
+  StyleHelper styleHelper = new StyleHelper();
 
   public UsuarioWindow() {
     setTitle("Usuario Management");
@@ -55,12 +59,12 @@ public class UsuarioWindow extends JFrame {
     // setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setLocationRelativeTo(null);
 
-    JPanel panel = new JPanel();
+    panel = new JPanel();
     panel.setLayout(new BorderLayout());
     panel.setBorder(BorderFactory.createEmptyBorder(20, 50, 50, 50)); // Add padding
 
     // Main content panel
-    JPanel mainPanel = new JPanel();
+    mainPanel = new JPanel();
     mainPanel.setLayout(new BorderLayout());
 
     // Table to display database rows
@@ -84,7 +88,7 @@ public class UsuarioWindow extends JFrame {
     mainPanel.add(scrollPane, BorderLayout.CENTER);
 
     // Buttons for CRUD operations
-    JPanel buttonPanel = new JPanel();
+    buttonPanel = new JPanel();
     addButton = new JButton("Add");
     editButton = new JButton("Edit");
     deleteButton = new JButton("Delete");
@@ -107,17 +111,17 @@ public class UsuarioWindow extends JFrame {
     mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
     // Header panel for title and input
-    JPanel headerPanel = new JPanel(new BorderLayout());
+    headerPanel = new JPanel(new BorderLayout());
 
     // Title to indicate the current table
-    JLabel titleLabel = new JLabel("Usuarios");
+    titleLabel = new JLabel("Usuarios");
     titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
     titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
     titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
     headerPanel.add(titleLabel, BorderLayout.NORTH);
 
     // Input fields for adding new usuario
-    JPanel inputPanel = new JPanel(new GridLayout(3, 2,10,5));
+    inputPanel = new JPanel(new GridLayout(3, 2,10,5));
     inputPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
     inputPanel.add(new JLabel("Nombre:"));
     nombreField = new JTextField();
@@ -405,6 +409,19 @@ public class UsuarioWindow extends JFrame {
     telefonoField.setText("");
     contrasenaField.setText("");
     correoField.setText("");
+  }
+
+  public void applyThemeColor(Color themeColor) {
+    styleHelper.setPanelColor(new JPanel[]{panel,mainPanel,headerPanel,inputPanel,buttonPanel},themeColor);
+  }
+
+  public void applyButtonColor(Color buttonColor) {
+    styleHelper.setElementColor(new JButton[]{addButton,editButton,deleteButton,saveButton,pdfButton,exitEditModeButton},buttonColor);
+  }
+
+  public void applyFontColor(Color fontColor) {
+    styleHelper.setLabelTextColor(new JLabel[]{titleLabel},fontColor);
+    styleHelper.setButtonTextColor(new JButton[]{addButton,editButton,deleteButton,saveButton,pdfButton,exitEditModeButton},fontColor);
   }
 
   public static void main(String[] args) {

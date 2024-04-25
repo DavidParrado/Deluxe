@@ -1,5 +1,7 @@
 package Gui;
 
+import Helpers.StyleHelper;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -16,6 +18,8 @@ public class MainGUI extends JFrame {
   private JLabel textColorIndicator;
   private JButton buttonColorButton;
   private JLabel buttonColorIndicator;
+  private UsuarioWindow usuarioWindow;
+  private StyleHelper styleHelper = new StyleHelper();
 
   public MainGUI() {
     setTitle("Database Operations");
@@ -50,7 +54,7 @@ public class MainGUI extends JFrame {
     UsuarioButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        UsuarioWindow usuarioWindow = new UsuarioWindow();
+        usuarioWindow = new UsuarioWindow();
         usuarioWindow.setVisible(true);
       }
     });
@@ -102,7 +106,7 @@ public class MainGUI extends JFrame {
     colorIndicator = new JLabel();
     colorIndicator.setPreferredSize(new Dimension(50, 50)); // Set preferred size for color indicator
     colorIndicator.setOpaque(true); // Set to true to allow background color
-    colorIndicator.setBackground(Color.WHITE); // Default color
+    colorIndicator.setBackground(new Color(238,238,238)); // Default color
     colorIndicator.setBorder(BorderFactory.createLineBorder(Color.black));
     // Create color button
     colorButton = new JButton("Tema");
@@ -117,6 +121,7 @@ public class MainGUI extends JFrame {
           titlePanel.setBackground(selectedColor);
           mainPanel.setBackground(selectedColor);
           colorPickerPanel.setBackground(selectedColor);
+            usuarioWindow.applyThemeColor(selectedColor);
         }
       }
     });
@@ -143,6 +148,7 @@ public class MainGUI extends JFrame {
           CategoriaButton.setForeground(selectedColor);
           MarcaButton.setForeground(selectedColor);
           ProductoButton.setForeground(selectedColor);
+          usuarioWindow.applyFontColor(selectedColor);
 //          colorPickerPanel.setBackground(selectedColor);
         }
       }
@@ -168,6 +174,7 @@ public class MainGUI extends JFrame {
           CategoriaButton.setBackground(selectedColor);
           MarcaButton.setBackground(selectedColor);
           ProductoButton.setBackground(selectedColor);
+          usuarioWindow.applyButtonColor(selectedColor);
 //          colorPickerPanel.setBackground(selectedColor);
         }
       }
