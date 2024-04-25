@@ -54,6 +54,6 @@ public class TableHelper {
     }
 
     // Removing row selection
-    table.removeRowSelectionInterval(table.getSelectedRow(),table.getSelectedRow() + 1);
+    table.clearSelection();
   }
 }
