@@ -10,6 +10,12 @@ public class MainGUI extends JFrame {
   private JButton CategoriaButton;
   private JButton ProductoButton;
   private JButton MarcaButton;
+  private JButton colorButton;
+  private JLabel colorIndicator;
+  private JButton textColorButton;
+  private JLabel textColorIndicator;
+  private JButton buttonColorButton;
+  private JLabel buttonColorIndicator;
 
   public MainGUI() {
     setTitle("Database Operations");
@@ -90,6 +96,90 @@ public class MainGUI extends JFrame {
     buttonPanel.add(ProductoButton);
     buttonPanel.add(MarcaButton);
     mainPanel.add(buttonPanel, BorderLayout.CENTER);
+
+    // Create color picker
+    JPanel colorPickerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    colorIndicator = new JLabel();
+    colorIndicator.setPreferredSize(new Dimension(50, 50)); // Set preferred size for color indicator
+    colorIndicator.setOpaque(true); // Set to true to allow background color
+    colorIndicator.setBackground(Color.WHITE); // Default color
+    colorIndicator.setBorder(BorderFactory.createLineBorder(Color.black));
+    // Create color button
+    colorButton = new JButton("Tema");
+    colorButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        Color selectedColor = JColorChooser.showDialog(MainGUI.this, "Select Color", Color.WHITE);
+        if (selectedColor != null) {
+          getContentPane().setBackground(selectedColor);
+          colorIndicator.setBackground(selectedColor);
+          buttonPanel.setBackground(selectedColor);
+          titlePanel.setBackground(selectedColor);
+          mainPanel.setBackground(selectedColor);
+          colorPickerPanel.setBackground(selectedColor);
+        }
+      }
+    });
+    colorPickerPanel.add(colorIndicator);
+    colorPickerPanel.add(colorButton);
+
+    textColorIndicator = new JLabel();
+    textColorIndicator.setPreferredSize(new Dimension(50, 50)); // Set preferred size for color indicator
+    textColorIndicator.setOpaque(true); // Set to true to allow background color
+    textColorIndicator.setBackground(Color.BLACK); // Default color
+    textColorIndicator.setBorder(BorderFactory.createLineBorder(Color.black));
+    // Create color button
+    textColorButton = new JButton("Letra");
+    textColorButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        Color selectedColor = JColorChooser.showDialog(MainGUI.this, "Select Color", Color.BLACK);
+        if (selectedColor != null) {
+          getContentPane().setBackground(selectedColor);
+          textColorIndicator.setBackground(selectedColor);
+          mainTitleLabel.setForeground(selectedColor);
+          welcomeLabel.setForeground(selectedColor);
+          UsuarioButton.setForeground(selectedColor);
+          CategoriaButton.setForeground(selectedColor);
+          MarcaButton.setForeground(selectedColor);
+          ProductoButton.setForeground(selectedColor);
+//          colorPickerPanel.setBackground(selectedColor);
+        }
+      }
+    });
+    colorPickerPanel.add(textColorIndicator);
+    colorPickerPanel.add(textColorButton);
+
+    buttonColorIndicator = new JLabel();
+    buttonColorIndicator.setPreferredSize(new Dimension(50, 50)); // Set preferred size for color indicator
+    buttonColorIndicator.setOpaque(true); // Set to true to allow background color
+    buttonColorIndicator.setBackground(new Color(205, 222, 237)); // Default color
+    buttonColorIndicator.setBorder(BorderFactory.createLineBorder(Color.black));
+    // Create color button
+    buttonColorButton = new JButton("Botones");
+    buttonColorButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        Color selectedColor = JColorChooser.showDialog(MainGUI.this, "Select Color", Color.BLACK);
+        if (selectedColor != null) {
+          getContentPane().setBackground(selectedColor);
+          buttonColorIndicator.setBackground(selectedColor);
+          UsuarioButton.setBackground(selectedColor);
+          CategoriaButton.setBackground(selectedColor);
+          MarcaButton.setBackground(selectedColor);
+          ProductoButton.setBackground(selectedColor);
+//          colorPickerPanel.setBackground(selectedColor);
+        }
+      }
+    });
+    colorPickerPanel.add(buttonColorIndicator);
+    colorPickerPanel.add(buttonColorButton);
+
+    // Add color button to the panel
+//    JPanel colorPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+//    colorPanel.add(colorButton);
+//    mainPanel.add(colorPanel, BorderLayout.SOUTH);
+    mainPanel.add(colorPickerPanel, BorderLayout.SOUTH);
 
     // Add the panel to the frame
     getContentPane().add(mainPanel, BorderLayout.CENTER);
