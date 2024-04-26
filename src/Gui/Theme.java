@@ -58,6 +58,7 @@ public class Theme extends JPanel {
           fontColor = selectedColor;
           fontColorIndicator.setBackground(selectedColor);
           mainGUI.applyFontColor(selectedColor);
+
           if( mainGUI.marcaWindow != null) mainGUI.marcaWindow.applyFontColor(selectedColor);
           if( mainGUI.usuarioWindow != null) mainGUI.usuarioWindow.applyFontColor(selectedColor);
           if( mainGUI.productoWindow != null) mainGUI.productoWindow.applyFontColor(selectedColor);

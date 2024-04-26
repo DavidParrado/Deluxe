@@ -108,20 +108,11 @@ public class MainGUI extends JFrame {
 
     // Add the panel to the frame
     getContentPane().add(mainPanel, BorderLayout.CENTER);
-    // Set background color for panels
-    mainPanel.setBackground(Theme.backgroundColor);
-    titlePanel.setBackground(Theme.backgroundColor);
-    buttonPanel.setBackground(Theme.backgroundColor);
 
-    // Set font color for labels
-    mainTitleLabel.setForeground(Theme.fontColor);
-    welcomeLabel.setForeground(Theme.fontColor);
+    applyFontColor(Theme.fontColor);
+    applyButtonColor(Theme.buttonColor);
+    applyBackgroundColor(Theme.backgroundColor);
 
-    // Set button colors
-    UsuarioButton.setBackground(Theme.buttonColor);
-    CategoriaButton.setBackground(Theme.buttonColor);
-    ProductoButton.setBackground(Theme.buttonColor);
-    MarcaButton.setBackground(Theme.buttonColor);
   }
 
   public void applyBackgroundColor(Color backgroundColor) {

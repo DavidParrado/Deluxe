@@ -82,11 +82,11 @@ public class CategoriaWindow extends JFrame {
     mainPanel.add(scrollPane, BorderLayout.CENTER);
 
     buttonPanel = new JPanel();
-    addButton = new JButton("Add");
-    editButton = new JButton("Edit");
-    deleteButton = new JButton("Delete");
+    addButton = new JButton("Agregar");
+    editButton = new JButton("Editar");
+    deleteButton = new JButton("Eliminar");
     pdfButton = new JButton("Descargar PDF");
-    saveButton = new JButton("Save");
+    saveButton = new JButton("Guardar cambios");
     saveButton.setVisible(false);
     exitEditModeButton = new JButton("Salir modo edicion");
     exitEditModeButton.setVisible(false);
@@ -213,7 +213,7 @@ public class CategoriaWindow extends JFrame {
     String descripcion = descripcionField.getText();
 
     if (nombre.isEmpty() || descripcion.isEmpty()) {
-      displayError("All fields are required");
+      displayError("Todos los campos son requeridos");
       return;
     }
 
@@ -239,12 +239,12 @@ public class CategoriaWindow extends JFrame {
 
     clearInputFields();
 
-    JOptionPane.showMessageDialog(this, "Categoria added successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+    displayMessage("Categoria insertada correctamente");
   }
   private void editCategoria() {
     int selectedRow = table.getSelectedRow();
     if (selectedRow == -1) {
-      displayError("Please select a row to edit");
+      displayError("Selecciona una fila para editar");
       return;
     }
 
@@ -261,7 +261,7 @@ public class CategoriaWindow extends JFrame {
   private void saveCategoria() {
     int selectedRow = table.getSelectedRow();
     if (selectedRow == -1) {
-      displayError("Please select a row to save changes");
+      displayError("Selecciona una fila para editar");
       return;
     }
 
@@ -296,7 +296,7 @@ public class CategoriaWindow extends JFrame {
   private void deleteCategoria() {
     int selectedRow = table.getSelectedRow();
     if (selectedRow == -1) {
-      displayError("Please select a row to delete");
+      displayError("Selecciona una fila para eliminar");
       return;
     }
 
@@ -314,7 +314,7 @@ public class CategoriaWindow extends JFrame {
       tableModel.removeRow(selectedRow);
       clearInputFields();
 
-      JOptionPane.showMessageDialog(CategoriaWindow.this, "Categoria deleted successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+      displayMessage("Categoria eliminada correctamente");
     }
   }
 

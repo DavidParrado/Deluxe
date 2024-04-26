@@ -87,11 +87,11 @@ public class MarcaWindow extends JFrame {
 
     // Buttons for CRUD operations
     buttonPanel = new JPanel();
-    addButton = new JButton("Add");
-    editButton = new JButton("Edit");
-    deleteButton = new JButton("Delete");
+    addButton = new JButton("Agregar");
+    editButton = new JButton("Editar");
+    deleteButton = new JButton("Eliminar");
     pdfButton = new JButton("Descargar PDF");
-    saveButton = new JButton("Save");
+    saveButton = new JButton("Guardar cambios");
     saveButton.setVisible(false);
     exitEditModeButton = new JButton("Salir modo edicion");
     exitEditModeButton.setVisible(false);
@@ -236,7 +236,7 @@ public class MarcaWindow extends JFrame {
 
     // Validate input fields
     if (nombre.isEmpty() || descripcion.isEmpty() || pais.isEmpty()) {
-      displayError("All fields are required");
+      displayError("Todos los campos son requeridos");
       return;
     }
 
@@ -265,13 +265,13 @@ public class MarcaWindow extends JFrame {
     // Clear input fields
     clearInputFields();
 
-    JOptionPane.showMessageDialog(this, "Marca added successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+    displayMessage("Marca insertada correctamente");
   }
 
   private void editMarca() {
     int selectedRow = table.getSelectedRow();
     if (selectedRow == -1) {
-      JOptionPane.showMessageDialog(MarcaWindow.this, "Please select a row to edit", "Error", JOptionPane.ERROR_MESSAGE);
+      displayError("Selecciona una fila para editar");
       return;
     }
 
@@ -292,7 +292,7 @@ public class MarcaWindow extends JFrame {
   private void saveMarca() {
     int selectedRow = table.getSelectedRow();
     if (selectedRow == -1) {
-      displayError("Please select a row to edit");
+      displayError("Selecciona una fila para editar");
       return;
     }
 
@@ -323,13 +323,13 @@ public class MarcaWindow extends JFrame {
     clearInputFields();
 
     // Display success message
-    JOptionPane.showMessageDialog(MarcaWindow.this, "Marca updated successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+    displayMessage("Marca insertada correctamente");
   }
 
   private void deleteMarca() {
     int selectedRow = table.getSelectedRow();
     if (selectedRow == -1) {
-      displayError("Please select a row to delete");
+      displayError("Selecciona una fila para eliminar");
       return;
     }
 
@@ -352,7 +352,7 @@ public class MarcaWindow extends JFrame {
       clearInputFields();
 
       // Display success message
-      JOptionPane.showMessageDialog(MarcaWindow.this, "Marca deleted successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+      displayMessage("Marca eliminada correctamente");
     }
   }
 

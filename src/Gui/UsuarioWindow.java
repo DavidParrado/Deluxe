@@ -90,11 +90,11 @@ public class UsuarioWindow extends JFrame {
 
     // Buttons for CRUD operations
     buttonPanel = new JPanel();
-    addButton = new JButton("Add");
-    editButton = new JButton("Edit");
-    deleteButton = new JButton("Delete");
+    addButton = new JButton("Agregar");
+    editButton = new JButton("Editar");
+    deleteButton = new JButton("Eliminar");
     pdfButton = new JButton("Descargar PDF");
-    saveButton = new JButton("Save");
+    saveButton = new JButton("Guardar cambios");
     saveButton.setVisible(false);
     exitEditModeButton = new JButton("Salir modo edicion");
     exitEditModeButton.setVisible(false);
@@ -261,7 +261,7 @@ public class UsuarioWindow extends JFrame {
 
     // Validate input fields
     if (nombre.isEmpty() || apellido.isEmpty() || correo.isEmpty() || contrasena.isEmpty() || direccion.isEmpty() || telefono.isEmpty()) {
-      displayError("All fields are required");
+      displayError("Todos los campos son requeridos");
       return;
     }
 
@@ -291,13 +291,13 @@ public class UsuarioWindow extends JFrame {
     // Clear input fields
     clearInputFields();
 
-    JOptionPane.showMessageDialog(this, "Usuario added successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+    displayMessage("Usuario insertado correctamente");
   }
 
   private void editUsuario() {
     int selectedRow = table.getSelectedRow();
     if (selectedRow == -1) {
-      displayError("Please select a row to edit");
+      displayError("Selecciona una fila para editar");
       return;
     }
 
@@ -323,7 +323,7 @@ public class UsuarioWindow extends JFrame {
   private void saveUsuario() {
     int selectedRow = table.getSelectedRow();
     if (selectedRow == -1) {
-      displayError("Please select a row to save changes");
+      displayError("Selecciona una fila para editar");
       return;
     }
 
@@ -340,7 +340,7 @@ public class UsuarioWindow extends JFrame {
 
     // Validate input fields
     if (nombre.isEmpty() || apellido.isEmpty() || direccion.isEmpty() || telefono.isEmpty() || correo.isEmpty()) {
-      displayError("All fields are required");
+      displayError("Revisa los campos vacios, recuerda que es opcional actualizar la contraseña");
       return;
     }
 
@@ -366,14 +366,14 @@ public class UsuarioWindow extends JFrame {
     clearInputFields();
 
     // Display success message
-    JOptionPane.showMessageDialog(UsuarioWindow.this, "Usuario updated successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+    displayMessage("Usuario actualizado correctamente");
   }
 
 
   private void deleteUsuario() {
     int selectedRow = table.getSelectedRow();
     if (selectedRow == -1) {
-      displayError("Please select a row to delete");
+      displayError("Selecciona una fila para eliminar");
       return;
     }
 
@@ -381,7 +381,7 @@ public class UsuarioWindow extends JFrame {
     String id = tableModel.getValueAt(selectedRow, 0).toString();
 
     // Display confirmation dialog before deleting
-    int confirm = JOptionPane.showConfirmDialog(UsuarioWindow.this, "Are you sure you want to delete this usuario?", "Confirmation", JOptionPane.YES_NO_OPTION);
+    int confirm = JOptionPane.showConfirmDialog(UsuarioWindow.this, "Estas seguro que deseas eliminar este usuario?", "Confirmation", JOptionPane.YES_NO_OPTION);
     if (confirm == JOptionPane.YES_OPTION) {
       try {
         // Delete the usuario using the provided id
@@ -395,7 +395,7 @@ public class UsuarioWindow extends JFrame {
       tableModel.removeRow(selectedRow);
 
       // Display success message
-      JOptionPane.showMessageDialog(UsuarioWindow.this, "Usuario deleted successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+      displayMessage("Usuario eliminado correctamente");
     }
   }
 

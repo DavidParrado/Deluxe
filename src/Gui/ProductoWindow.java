@@ -93,11 +93,11 @@ public class ProductoWindow extends JFrame {
     mainPanel.add(scrollPane, BorderLayout.CENTER);
 
     buttonPanel = new JPanel();
-    addButton = new JButton("Add");
-    editButton = new JButton("Edit");
-    deleteButton = new JButton("Delete");
+    addButton = new JButton("Agregar");
+    editButton = new JButton("Editar");
+    deleteButton = new JButton("Eliminar");
     pdfButton = new JButton("Descargar PDF");
-    saveButton = new JButton("Save");
+    saveButton = new JButton("Guardar cambios");
     saveButton.setVisible(false);
     exitEditModeButton = new JButton("Salir modo edicion");
     exitEditModeButton.setVisible(false);
@@ -260,7 +260,7 @@ public class ProductoWindow extends JFrame {
 
     // Validate input fields
     if (nombre.isEmpty() || descripcion.isEmpty() || precio.isEmpty() || talla.isEmpty() || color.isEmpty() || cantidad.isEmpty() || urlImagen.isEmpty() || idMarca.isEmpty()) {
-      displayError("All fields are required");
+      displayError("Todos los campos son requeridos");
       return;
     }
 
@@ -294,13 +294,13 @@ public class ProductoWindow extends JFrame {
     // Clear input fields
     clearInputFields();
 
-    JOptionPane.showMessageDialog(this, "Producto added successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+    displayMessage("Producto insertado correctamente");
   }
 
   private void editProducto() {
     int selectedRow = table.getSelectedRow();
     if (selectedRow == -1) {
-      JOptionPane.showMessageDialog(ProductoWindow.this, "Please select a row to edit", "Error", JOptionPane.ERROR_MESSAGE);
+      displayError("Selecciona una fila para editar");
       return;
     }
 
@@ -332,7 +332,7 @@ public class ProductoWindow extends JFrame {
   private void saveProducto() {
     int selectedRow = table.getSelectedRow();
     if (selectedRow == -1) {
-      displayError("Please select a row to edit");
+      displayError("Selecciona una fila para editar");
       return;
     }
 
@@ -373,13 +373,13 @@ public class ProductoWindow extends JFrame {
     clearInputFields();
 
     // Display success message
-    JOptionPane.showMessageDialog(ProductoWindow.this, "Product updated successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+    displayMessage("Producto actualizado correctamente");
   }
 
   private void deleteProducto() {
     int selectedRow = table.getSelectedRow();
     if (selectedRow == -1) {
-      displayError("Please select a row to delete");
+      displayError("Selecciona una fila para eliminar");
       return;
     }
 
@@ -387,12 +387,12 @@ public class ProductoWindow extends JFrame {
     String id = tableModel.getValueAt(selectedRow, 0).toString();
 
     // Display confirmation dialog before deleting
-    int confirm = JOptionPane.showConfirmDialog(ProductoWindow.this, "Are you sure you want to delete this product?", "Confirmation", JOptionPane.YES_NO_OPTION);
+    int confirm = JOptionPane.showConfirmDialog(ProductoWindow.this, "Estas seguro que deseas eliminar este producto", "Confirmation", JOptionPane.YES_NO_OPTION);
     if (confirm == JOptionPane.YES_OPTION) {
       try {
         producto.delete(id);
       } catch (Exception e) {
-        displayError("Failed to delete the product. Please try again.");
+        displayError("Error al eliminar este producto. Intenta de nuevo.");
         return;
       }
 
@@ -403,7 +403,7 @@ public class ProductoWindow extends JFrame {
       clearInputFields();
 
       // Display success message
-      JOptionPane.showMessageDialog(ProductoWindow.this, "Product deleted successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+      displayMessage("Producto insertado correctamente");
     }
   }
 
