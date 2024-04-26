@@ -1,15 +1,26 @@
 package Gui;
 
+import Helpers.StyleHelper;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MainGUI extends JFrame {
+  private JPanel mainPanel;
+  private JPanel titlePanel;
+  private JPanel buttonPanel;
+  private JLabel mainTitleLabel;
+  private JLabel welcomeLabel;
   private JButton UsuarioButton;
   private JButton CategoriaButton;
   private JButton ProductoButton;
   private JButton MarcaButton;
+  public UsuarioWindow usuarioWindow;
+  public CategoriaWindow categoriaWindow;
+  public ProductoWindow productoWindow;
+  public MarcaWindow marcaWindow;
 
   public MainGUI() {
     setTitle("Database Operations");
@@ -18,12 +29,12 @@ public class MainGUI extends JFrame {
     setLocationRelativeTo(null);
 
     // Create main title label
-    JLabel mainTitleLabel = new JLabel("Deluxe");
+    mainTitleLabel = new JLabel("Deluxe");
     mainTitleLabel.setFont(new Font("Arial", Font.BOLD, 36));
     mainTitleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
     // Create welcome label
-    JLabel welcomeLabel = new JLabel("Bienvenido selecciona el modulo al que quieres acceder");
+    welcomeLabel = new JLabel("Bienvenido selecciona el modulo al que quieres acceder");
     welcomeLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
     welcomeLabel.setFont(new Font("Arial", Font.BOLD, 22));
     welcomeLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -44,7 +55,7 @@ public class MainGUI extends JFrame {
     UsuarioButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        UsuarioWindow usuarioWindow = new UsuarioWindow();
+        usuarioWindow = UsuarioWindow.getInstance();
         usuarioWindow.setVisible(true);
       }
     });
@@ -52,7 +63,7 @@ public class MainGUI extends JFrame {
     CategoriaButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        CategoriaWindow categoriaWindow = new CategoriaWindow();
+        categoriaWindow = CategoriaWindow.getInstance();
         categoriaWindow.setVisible(true);
       }
     });
@@ -60,7 +71,7 @@ public class MainGUI extends JFrame {
     ProductoButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        ProductoWindow productoWindow = new ProductoWindow();
+        productoWindow = ProductoWindow.getInstance();
         productoWindow.setVisible(true);
       }
     });
@@ -68,22 +79,22 @@ public class MainGUI extends JFrame {
     MarcaButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        MarcaWindow marcaWindow = new MarcaWindow();
+        marcaWindow = MarcaWindow.getInstance();
         marcaWindow.setVisible(true);
       }
     });
 
     // Create a panel to hold the main title label, welcome label, and buttons
-    JPanel mainPanel = new JPanel(new BorderLayout());
+    mainPanel = new JPanel(new BorderLayout());
     mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 50, 50, 50)); // Add padding
 
-    JPanel titlePanel = new JPanel(new BorderLayout());
+    titlePanel = new JPanel(new BorderLayout());
     titlePanel.add(mainTitleLabel, BorderLayout.NORTH);
 
     titlePanel.add(welcomeLabel, BorderLayout.CENTER);
     mainPanel.add(titlePanel, BorderLayout.NORTH);
 
-    JPanel buttonPanel = new JPanel(new GridLayout(4, 1, 10, 10)); // Add vertical spacing between buttons
+    buttonPanel = new JPanel(new GridLayout(4, 1, 10, 10)); // Add vertical spacing between buttons
     buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0)); // Add top padding
     buttonPanel.add(UsuarioButton);
     buttonPanel.add(CategoriaButton);
@@ -91,9 +102,32 @@ public class MainGUI extends JFrame {
     buttonPanel.add(MarcaButton);
     mainPanel.add(buttonPanel, BorderLayout.CENTER);
 
+    // Color picker
+    Theme theme = new Theme(this);
+    mainPanel.add(theme, BorderLayout.SOUTH);
+
     // Add the panel to the frame
     getContentPane().add(mainPanel, BorderLayout.CENTER);
+
+    applyFontColor(Theme.fontColor);
+    applyButtonColor(Theme.buttonColor);
+    applyBackgroundColor(Theme.backgroundColor);
+
   }
+
+  public void applyBackgroundColor(Color backgroundColor) {
+    StyleHelper.setBackgroundColor(new JPanel[]{mainPanel,titlePanel,buttonPanel},backgroundColor);
+  }
+
+  public void applyButtonColor(Color buttonColor) {
+    StyleHelper.setBackgroundColor(new JButton[]{UsuarioButton,CategoriaButton,ProductoButton,MarcaButton},buttonColor);
+  }
+
+  public void applyFontColor(Color fontColor) {
+    StyleHelper.setFontColor(new JLabel[]{mainTitleLabel,welcomeLabel},fontColor);
+    StyleHelper.setFontColor(new JComponent[]{UsuarioButton,CategoriaButton,ProductoButton,MarcaButton},fontColor);
+  }
+
 
   public static void main(String[] args) {
     // Create and show the GUI

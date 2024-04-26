@@ -4,6 +4,7 @@ import Entities.Producto;
 import Factories.EntityFactory;
 import Helpers.PdfGenerator;
 import Helpers.SerialHelper;
+import Helpers.StyleHelper;
 import Helpers.TableHelper;
 import Params.ProductoParams;
 
@@ -13,11 +14,19 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
 
 public class ProductoWindow extends JFrame {
+  private static ProductoWindow instance;
+  private JPanel panel;
+  private JPanel mainPanel;
+  private JPanel headerPanel;
+  private JPanel inputPanel;
+  private JPanel buttonPanel;
   private DefaultTableModel tableModel;
   private JTable table;
   private JButton addButton;
@@ -26,6 +35,17 @@ public class ProductoWindow extends JFrame {
   private JButton pdfButton;
   private JButton saveButton;
   private JButton exitEditModeButton;
+
+  // Labels
+  private JLabel titleLabel;
+  private JLabel nombreLabel = new JLabel("Nombre:");
+  private JLabel descripcionLabel = new JLabel("Descripción:");
+  private JLabel precioLabel = new JLabel("Precio:");
+  private JLabel tallaLabel = new JLabel("Talla:");
+  private JLabel colorLabel = new JLabel("Color:");
+  private JLabel cantidadLabel = new JLabel("Cantidad:");
+  private JLabel urlImagenLabel = new JLabel("URL Imagen:");
+  private JLabel idMarcaLabel = new JLabel("ID Marca:");
 
   private JTextField nombreField;
   private JTextField descripcionField;
@@ -48,11 +68,11 @@ public class ProductoWindow extends JFrame {
     setSize(800, 600);
     setLocationRelativeTo(null);
 
-    JPanel panel = new JPanel();
+    panel = new JPanel();
     panel.setLayout(new BorderLayout());
     panel.setBorder(BorderFactory.createEmptyBorder(20, 50, 50, 50));
 
-    JPanel mainPanel = new JPanel();
+    mainPanel = new JPanel();
     mainPanel.setLayout(new BorderLayout());
 
     tableModel = new DefaultTableModel();
@@ -74,12 +94,12 @@ public class ProductoWindow extends JFrame {
     JScrollPane scrollPane = new JScrollPane(table);
     mainPanel.add(scrollPane, BorderLayout.CENTER);
 
-    JPanel buttonPanel = new JPanel();
-    addButton = new JButton("Add");
-    editButton = new JButton("Edit");
-    deleteButton = new JButton("Delete");
+    buttonPanel = new JPanel();
+    addButton = new JButton("Agregar");
+    editButton = new JButton("Editar");
+    deleteButton = new JButton("Eliminar");
     pdfButton = new JButton("Descargar PDF");
-    saveButton = new JButton("Save");
+    saveButton = new JButton("Guardar cambios");
     saveButton.setVisible(false);
     exitEditModeButton = new JButton("Salir modo edicion");
     exitEditModeButton.setVisible(false);
@@ -95,38 +115,38 @@ public class ProductoWindow extends JFrame {
     buttonPanel.add(exitEditModeButton);
     mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-    JPanel headerPanel = new JPanel(new BorderLayout());
+    headerPanel = new JPanel(new BorderLayout());
 
-    JLabel titleLabel = new JLabel("Productos");
+    titleLabel = new JLabel("Productos");
     titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
     titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
     titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
     headerPanel.add(titleLabel, BorderLayout.NORTH);
 
-    JPanel inputPanel = new JPanel(new GridLayout(4, 2,10,5));
+    inputPanel = new JPanel(new GridLayout(4, 2,10,5));
     inputPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
-    inputPanel.add(new JLabel("Nombre:"));
+    inputPanel.add(nombreLabel);
     nombreField = new JTextField();
     inputPanel.add(nombreField);
-    inputPanel.add(new JLabel("Descripción:"));
+    inputPanel.add(descripcionLabel);
     descripcionField = new JTextField();
     inputPanel.add(descripcionField);
-    inputPanel.add(new JLabel("Precio:"));
+    inputPanel.add(precioLabel);
     precioField = new JTextField();
     inputPanel.add(precioField);
-    inputPanel.add(new JLabel("Talla:"));
+    inputPanel.add(tallaLabel);
     tallaField = new JTextField();
     inputPanel.add(tallaField);
-    inputPanel.add(new JLabel("Color:"));
+    inputPanel.add(colorLabel);
     colorField = new JTextField();
     inputPanel.add(colorField);
-    inputPanel.add(new JLabel("Cantidad:"));
+    inputPanel.add(cantidadLabel);
     cantidadField = new JTextField();
     inputPanel.add(cantidadField);
-    inputPanel.add(new JLabel("URL Imagen:"));
+    inputPanel.add(urlImagenLabel);
     urlImagenField = new JTextField();
     inputPanel.add(urlImagenField);
-    inputPanel.add(new JLabel("ID Marca:"));
+    inputPanel.add(idMarcaLabel);
     idMarcaField = new JTextField();
     inputPanel.add(idMarcaField);
     headerPanel.add(inputPanel, BorderLayout.CENTER);
@@ -158,6 +178,15 @@ public class ProductoWindow extends JFrame {
 
         pdfGenerator.downloadPdf(productos,headers,fields, filename);
         displayMessage("Pdf generado correctamente.");
+        String filePath = System.getProperty("user.dir") + File.separator + filename + ".pdf";
+        File file = new File(filePath);
+        if(file.exists()) {
+          try {
+            Desktop.getDesktop().open(file);
+          } catch (IOException er) {
+            System.out.println("Error opening file: " + er.getMessage());
+          }
+        }
       }
     });
 
@@ -181,6 +210,11 @@ public class ProductoWindow extends JFrame {
         deleteProducto();
       }
     });
+
+    // Apply theme
+    applyFontColor(Theme.fontColor);
+    applyButtonColor(Theme.buttonColor);
+    applyBackgroundColor(Theme.backgroundColor);
 
     initTable();
 
@@ -237,7 +271,7 @@ public class ProductoWindow extends JFrame {
 
     // Validate input fields
     if (nombre.isEmpty() || descripcion.isEmpty() || precio.isEmpty() || talla.isEmpty() || color.isEmpty() || cantidad.isEmpty() || urlImagen.isEmpty() || idMarca.isEmpty()) {
-      displayError("All fields are required");
+      displayError("Todos los campos son requeridos");
       return;
     }
 
@@ -271,13 +305,13 @@ public class ProductoWindow extends JFrame {
     // Clear input fields
     clearInputFields();
 
-    JOptionPane.showMessageDialog(this, "Producto added successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+    displayMessage("Producto insertado correctamente");
   }
 
   private void editProducto() {
     int selectedRow = table.getSelectedRow();
     if (selectedRow == -1) {
-      JOptionPane.showMessageDialog(ProductoWindow.this, "Please select a row to edit", "Error", JOptionPane.ERROR_MESSAGE);
+      displayError("Selecciona una fila para editar");
       return;
     }
 
@@ -306,11 +340,10 @@ public class ProductoWindow extends JFrame {
     tableHelper.enterEditMode(editModeButtons, operationButtons);
   }
 
-
   private void saveProducto() {
     int selectedRow = table.getSelectedRow();
     if (selectedRow == -1) {
-      displayError("Please select a row to edit");
+      displayError("Selecciona una fila para editar");
       return;
     }
 
@@ -351,13 +384,13 @@ public class ProductoWindow extends JFrame {
     clearInputFields();
 
     // Display success message
-    JOptionPane.showMessageDialog(ProductoWindow.this, "Product updated successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+    displayMessage("Producto actualizado correctamente");
   }
 
   private void deleteProducto() {
     int selectedRow = table.getSelectedRow();
     if (selectedRow == -1) {
-      displayError("Please select a row to delete");
+      displayError("Selecciona una fila para eliminar");
       return;
     }
 
@@ -365,12 +398,12 @@ public class ProductoWindow extends JFrame {
     String id = tableModel.getValueAt(selectedRow, 0).toString();
 
     // Display confirmation dialog before deleting
-    int confirm = JOptionPane.showConfirmDialog(ProductoWindow.this, "Are you sure you want to delete this product?", "Confirmation", JOptionPane.YES_NO_OPTION);
+    int confirm = JOptionPane.showConfirmDialog(ProductoWindow.this, "Estas seguro que deseas eliminar este producto", "Confirmation", JOptionPane.YES_NO_OPTION);
     if (confirm == JOptionPane.YES_OPTION) {
       try {
         producto.delete(id);
       } catch (Exception e) {
-        displayError("Failed to delete the product. Please try again.");
+        displayError("Error al eliminar este producto. Intenta de nuevo.");
         return;
       }
 
@@ -381,10 +414,9 @@ public class ProductoWindow extends JFrame {
       clearInputFields();
 
       // Display success message
-      JOptionPane.showMessageDialog(ProductoWindow.this, "Product deleted successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+      displayMessage("Producto insertado correctamente");
     }
   }
-
 
   private void displayError(String message) {
     JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
@@ -408,6 +440,27 @@ public class ProductoWindow extends JFrame {
     cantidadField.setText("");
     urlImagenField.setText("");
     idMarcaField.setText("");
+  }
+
+  public void applyBackgroundColor(Color backgroundColor) {
+    StyleHelper.setBackgroundColor(new JPanel[]{panel,mainPanel,headerPanel,inputPanel,buttonPanel},backgroundColor);
+  }
+
+  public void applyButtonColor(Color buttonColor) {
+    StyleHelper.setBackgroundColor(new JButton[]{addButton,editButton,deleteButton,saveButton,pdfButton,exitEditModeButton},buttonColor);
+  }
+
+  public void applyFontColor(Color fontColor) {
+    StyleHelper.setFontColor(new JLabel[]{titleLabel},fontColor);
+    StyleHelper.setFontColor(new JComponent[]{addButton,editButton,deleteButton,saveButton,pdfButton,exitEditModeButton},fontColor);
+    StyleHelper.setFontColor(new JComponent[]{nombreLabel,descripcionLabel,precioLabel,tallaLabel,colorLabel,cantidadLabel,urlImagenLabel,idMarcaLabel},fontColor);
+  }
+
+  public static ProductoWindow getInstance() {
+    if(instance == null) {
+      instance = new ProductoWindow();
+    }
+    return instance;
   }
 
   public static void main(String[] args) {
