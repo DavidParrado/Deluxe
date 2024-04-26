@@ -11,6 +11,8 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.sql.*;
 import java.util.Vector;
 
@@ -175,6 +177,15 @@ public class UsuarioWindow extends JFrame {
 
         pdfGenerator.downloadPdf(usuarios,headers,fields, filename);
         displayMessage("Pdf generado correctamente.");
+        String filePath = System.getProperty("user.dir") + File.separator + filename + ".pdf";
+        File file = new File(filePath);
+        if(file.exists()) {
+          try {
+            Desktop.getDesktop().open(file);
+          } catch (IOException er) {
+            System.out.println("Error opening file: " + er.getMessage());
+          }
+        }
       }
     });
 
