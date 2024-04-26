@@ -4,6 +4,7 @@ import Entities.Categoria;
 import Factories.EntityFactory;
 import Helpers.PdfGenerator;
 import Helpers.SerialHelper;
+import Helpers.StyleHelper;
 import Helpers.TableHelper;
 import Params.CategoriaParams;
 
@@ -18,6 +19,12 @@ import java.sql.SQLException;
 import java.util.Vector;
 
 public class CategoriaWindow extends JFrame {
+  private static CategoriaWindow instance;
+  private JPanel panel;
+  private JPanel mainPanel;
+  private JPanel inputPanel;
+  private JPanel headerPanel;
+  private JPanel buttonPanel;
   private DefaultTableModel tableModel;
   private JTable table;
   private JButton addButton;
@@ -27,6 +34,11 @@ public class CategoriaWindow extends JFrame {
   private JButton saveButton;
 
   private JButton exitEditModeButton;
+
+  // Labels
+  private JLabel titleLabel;
+  private JLabel nombreLabel = new JLabel("Nombre:");
+  private JLabel descripcionLabel = new JLabel("Descripción:");
 
   // Input fields for new categoria
   private JTextField nombreField;
@@ -38,17 +50,16 @@ public class CategoriaWindow extends JFrame {
   private JButton[] editModeButtons;
   private JButton[] operationButtons;
 
-
   public CategoriaWindow() {
     setTitle("Categoria Management");
     setSize(800, 600);
     setLocationRelativeTo(null);
 
-    JPanel panel = new JPanel();
+    panel = new JPanel();
     panel.setLayout(new BorderLayout());
     panel.setBorder(BorderFactory.createEmptyBorder(20, 50, 50, 50));
 
-    JPanel mainPanel = new JPanel();
+    mainPanel = new JPanel();
     mainPanel.setLayout(new BorderLayout());
 
     tableModel = new DefaultTableModel();
@@ -70,7 +81,7 @@ public class CategoriaWindow extends JFrame {
     JScrollPane scrollPane = new JScrollPane(table);
     mainPanel.add(scrollPane, BorderLayout.CENTER);
 
-    JPanel buttonPanel = new JPanel();
+    buttonPanel = new JPanel();
     addButton = new JButton("Add");
     editButton = new JButton("Edit");
     deleteButton = new JButton("Delete");
@@ -91,20 +102,20 @@ public class CategoriaWindow extends JFrame {
     buttonPanel.add(exitEditModeButton);
     mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-    JPanel headerPanel = new JPanel(new BorderLayout());
+    headerPanel = new JPanel(new BorderLayout());
 
-    JLabel titleLabel = new JLabel("Categorias");
+    titleLabel = new JLabel("Categorias");
     titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
     titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
     titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
     headerPanel.add(titleLabel, BorderLayout.NORTH);
 
-    JPanel inputPanel = new JPanel(new GridLayout(2, 2, 10, 5));
+    inputPanel = new JPanel(new GridLayout(2, 2, 10, 5));
     inputPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
-    inputPanel.add(new JLabel("Nombre:"));
+    inputPanel.add(nombreLabel);
     nombreField = new JTextField();
     inputPanel.add(nombreField);
-    inputPanel.add(new JLabel("Descripción:"));
+    inputPanel.add(descripcionLabel);
     descripcionField = new JTextField();
     inputPanel.add(descripcionField);
     headerPanel.add(inputPanel, BorderLayout.CENTER);
@@ -162,6 +173,11 @@ public class CategoriaWindow extends JFrame {
       }
     });
 
+    // Apply theme
+    applyFontColor(Theme.fontColor);
+    applyButtonColor(Theme.buttonColor);
+    applyBackgroundColor(Theme.backgroundColor);
+
     initTable();
 
     setContentPane(panel);
@@ -174,8 +190,6 @@ public class CategoriaWindow extends JFrame {
     columnNames.add("ID");
     columnNames.add("Nombre");
     columnNames.add("Descripción");
-
-    categoria = new Categoria();
 
     ResultSet categorias = categoria.find();
 
@@ -309,6 +323,20 @@ public class CategoriaWindow extends JFrame {
     descripcionField.setText("");
   }
 
+  public void applyBackgroundColor(Color backgroundColor) {
+    StyleHelper.setBackgroundColor(new JPanel[]{panel,mainPanel,headerPanel,inputPanel,buttonPanel},backgroundColor);
+  }
+
+  public void applyButtonColor(Color buttonColor) {
+    StyleHelper.setBackgroundColor(new JButton[]{addButton,editButton,deleteButton,saveButton,pdfButton,exitEditModeButton},buttonColor);
+  }
+
+  public void applyFontColor(Color fontColor) {
+    StyleHelper.setFontColor(new JLabel[]{titleLabel},fontColor);
+    StyleHelper.setFontColor(new JComponent[]{addButton,editButton,deleteButton,saveButton,pdfButton,exitEditModeButton},fontColor);
+    StyleHelper.setFontColor(new JComponent[]{nombreLabel,descripcionLabel},fontColor);
+  }
+
   private void displayError(String message) {
     JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
   }
@@ -316,6 +344,14 @@ public class CategoriaWindow extends JFrame {
   private void displayMessage(String message) {
     JOptionPane.showMessageDialog(this, message, "Success", JOptionPane.INFORMATION_MESSAGE);
   }
+
+  public static CategoriaWindow getInstance() {
+    if(instance == null) {
+      instance = new CategoriaWindow();
+    }
+    return instance;
+  }
+
 
   public static void main(String[] args) {
     SwingUtilities.invokeLater(() -> {

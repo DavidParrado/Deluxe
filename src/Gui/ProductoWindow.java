@@ -4,6 +4,7 @@ import Entities.Producto;
 import Factories.EntityFactory;
 import Helpers.PdfGenerator;
 import Helpers.SerialHelper;
+import Helpers.StyleHelper;
 import Helpers.TableHelper;
 import Params.ProductoParams;
 
@@ -18,6 +19,12 @@ import java.sql.SQLException;
 import java.util.Vector;
 
 public class ProductoWindow extends JFrame {
+  private static ProductoWindow instance;
+  private JPanel panel;
+  private JPanel mainPanel;
+  private JPanel headerPanel;
+  private JPanel inputPanel;
+  private JPanel buttonPanel;
   private DefaultTableModel tableModel;
   private JTable table;
   private JButton addButton;
@@ -26,6 +33,17 @@ public class ProductoWindow extends JFrame {
   private JButton pdfButton;
   private JButton saveButton;
   private JButton exitEditModeButton;
+
+  // Labels
+  private JLabel titleLabel;
+  private JLabel nombreLabel = new JLabel("Nombre:");
+  private JLabel descripcionLabel = new JLabel("Descripción:");
+  private JLabel precioLabel = new JLabel("Precio:");
+  private JLabel tallaLabel = new JLabel("Talla:");
+  private JLabel colorLabel = new JLabel("Color:");
+  private JLabel cantidadLabel = new JLabel("Cantidad:");
+  private JLabel urlImagenLabel = new JLabel("URL Imagen:");
+  private JLabel idMarcaLabel = new JLabel("ID Marca:");
 
   private JTextField nombreField;
   private JTextField descripcionField;
@@ -48,11 +66,11 @@ public class ProductoWindow extends JFrame {
     setSize(800, 600);
     setLocationRelativeTo(null);
 
-    JPanel panel = new JPanel();
+    panel = new JPanel();
     panel.setLayout(new BorderLayout());
     panel.setBorder(BorderFactory.createEmptyBorder(20, 50, 50, 50));
 
-    JPanel mainPanel = new JPanel();
+    mainPanel = new JPanel();
     mainPanel.setLayout(new BorderLayout());
 
     tableModel = new DefaultTableModel();
@@ -74,7 +92,7 @@ public class ProductoWindow extends JFrame {
     JScrollPane scrollPane = new JScrollPane(table);
     mainPanel.add(scrollPane, BorderLayout.CENTER);
 
-    JPanel buttonPanel = new JPanel();
+    buttonPanel = new JPanel();
     addButton = new JButton("Add");
     editButton = new JButton("Edit");
     deleteButton = new JButton("Delete");
@@ -95,38 +113,38 @@ public class ProductoWindow extends JFrame {
     buttonPanel.add(exitEditModeButton);
     mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-    JPanel headerPanel = new JPanel(new BorderLayout());
+    headerPanel = new JPanel(new BorderLayout());
 
-    JLabel titleLabel = new JLabel("Productos");
+    titleLabel = new JLabel("Productos");
     titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
     titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
     titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
     headerPanel.add(titleLabel, BorderLayout.NORTH);
 
-    JPanel inputPanel = new JPanel(new GridLayout(4, 2,10,5));
+    inputPanel = new JPanel(new GridLayout(4, 2,10,5));
     inputPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
-    inputPanel.add(new JLabel("Nombre:"));
+    inputPanel.add(nombreLabel);
     nombreField = new JTextField();
     inputPanel.add(nombreField);
-    inputPanel.add(new JLabel("Descripción:"));
+    inputPanel.add(descripcionLabel);
     descripcionField = new JTextField();
     inputPanel.add(descripcionField);
-    inputPanel.add(new JLabel("Precio:"));
+    inputPanel.add(precioLabel);
     precioField = new JTextField();
     inputPanel.add(precioField);
-    inputPanel.add(new JLabel("Talla:"));
+    inputPanel.add(tallaLabel);
     tallaField = new JTextField();
     inputPanel.add(tallaField);
-    inputPanel.add(new JLabel("Color:"));
+    inputPanel.add(colorLabel);
     colorField = new JTextField();
     inputPanel.add(colorField);
-    inputPanel.add(new JLabel("Cantidad:"));
+    inputPanel.add(cantidadLabel);
     cantidadField = new JTextField();
     inputPanel.add(cantidadField);
-    inputPanel.add(new JLabel("URL Imagen:"));
+    inputPanel.add(urlImagenLabel);
     urlImagenField = new JTextField();
     inputPanel.add(urlImagenField);
-    inputPanel.add(new JLabel("ID Marca:"));
+    inputPanel.add(idMarcaLabel);
     idMarcaField = new JTextField();
     inputPanel.add(idMarcaField);
     headerPanel.add(inputPanel, BorderLayout.CENTER);
@@ -181,6 +199,11 @@ public class ProductoWindow extends JFrame {
         deleteProducto();
       }
     });
+
+    // Apply theme
+    applyFontColor(Theme.fontColor);
+    applyButtonColor(Theme.buttonColor);
+    applyBackgroundColor(Theme.backgroundColor);
 
     initTable();
 
@@ -306,7 +329,6 @@ public class ProductoWindow extends JFrame {
     tableHelper.enterEditMode(editModeButtons, operationButtons);
   }
 
-
   private void saveProducto() {
     int selectedRow = table.getSelectedRow();
     if (selectedRow == -1) {
@@ -385,7 +407,6 @@ public class ProductoWindow extends JFrame {
     }
   }
 
-
   private void displayError(String message) {
     JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
   }
@@ -408,6 +429,27 @@ public class ProductoWindow extends JFrame {
     cantidadField.setText("");
     urlImagenField.setText("");
     idMarcaField.setText("");
+  }
+
+  public void applyBackgroundColor(Color backgroundColor) {
+    StyleHelper.setBackgroundColor(new JPanel[]{panel,mainPanel,headerPanel,inputPanel,buttonPanel},backgroundColor);
+  }
+
+  public void applyButtonColor(Color buttonColor) {
+    StyleHelper.setBackgroundColor(new JButton[]{addButton,editButton,deleteButton,saveButton,pdfButton,exitEditModeButton},buttonColor);
+  }
+
+  public void applyFontColor(Color fontColor) {
+    StyleHelper.setFontColor(new JLabel[]{titleLabel},fontColor);
+    StyleHelper.setFontColor(new JComponent[]{addButton,editButton,deleteButton,saveButton,pdfButton,exitEditModeButton},fontColor);
+    StyleHelper.setFontColor(new JComponent[]{nombreLabel,descripcionLabel,precioLabel,tallaLabel,colorLabel,cantidadLabel,urlImagenLabel,idMarcaLabel},fontColor);
+  }
+
+  public static ProductoWindow getInstance() {
+    if(instance == null) {
+      instance = new ProductoWindow();
+    }
+    return instance;
   }
 
   public static void main(String[] args) {

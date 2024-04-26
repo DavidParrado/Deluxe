@@ -5,23 +5,17 @@ import Factories.EntityFactory;
 import Helpers.*;
 import Params.UsuarioParams;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.sql.*;
 import java.util.Vector;
 
 public class UsuarioWindow extends JFrame {
+  private static UsuarioWindow instance;
   private JPanel panel;
   private JPanel mainPanel;
   private JPanel headerPanel;
@@ -35,6 +29,15 @@ public class UsuarioWindow extends JFrame {
   private JButton pdfButton;
   private JButton saveButton;
   private JButton exitEditModeButton;
+
+  // Labels for inputs
+  private JLabel titleLabel;
+  private JLabel nombreLabel = new JLabel("Nombre:");
+  private JLabel apellidoLabel = new JLabel("Apellido:");
+  private JLabel correoLabel = new JLabel("Correo:");
+  private JLabel contrasenaLabel = new JLabel("Contraseña:");
+  private JLabel direccionLabel = new JLabel("Dirección:");
+  private JLabel telefonoLabel = new JLabel("Teléfono:");
 
   // Input fields for new usuario
   private JTextField nombreField;
@@ -50,8 +53,6 @@ public class UsuarioWindow extends JFrame {
   private TableHelper tableHelper;
   private JButton[] editModeButtons;
   private JButton[] operationButtons;
-  private JLabel titleLabel;
-  StyleHelper styleHelper = new StyleHelper();
 
   public UsuarioWindow() {
     setTitle("Usuario Management");
@@ -123,22 +124,22 @@ public class UsuarioWindow extends JFrame {
     // Input fields for adding new usuario
     inputPanel = new JPanel(new GridLayout(3, 2,10,5));
     inputPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
-    inputPanel.add(new JLabel("Nombre:"));
+    inputPanel.add(nombreLabel);
     nombreField = new JTextField();
     inputPanel.add(nombreField);
-    inputPanel.add(new JLabel("Apellido:"));
+    inputPanel.add(apellidoLabel);
     apellidoField = new JTextField();
     inputPanel.add(apellidoField);
-    inputPanel.add(new JLabel("Correo:"));
+    inputPanel.add(correoLabel);
     correoField = new JTextField();
     inputPanel.add(correoField);
-    inputPanel.add(new JLabel("Contraseña:"));
+    inputPanel.add(contrasenaLabel);
     contrasenaField = new JPasswordField();
     inputPanel.add(contrasenaField);
-    inputPanel.add(new JLabel("Dirección:"));
+    inputPanel.add(direccionLabel);
     direccionField = new JTextField();
     inputPanel.add(direccionField);
-    inputPanel.add(new JLabel("Teléfono:"));
+    inputPanel.add(telefonoLabel);
     telefonoField = new JTextField();
     inputPanel.add(telefonoField);
     headerPanel.add(inputPanel, BorderLayout.CENTER);
@@ -201,6 +202,11 @@ public class UsuarioWindow extends JFrame {
         deleteUsuario();
       }
     });
+
+    // Apply theme
+    applyFontColor(Theme.fontColor);
+    applyButtonColor(Theme.buttonColor);
+    applyBackgroundColor(Theme.backgroundColor);
 
     // Initialize table with sample data
     initTable();
@@ -411,17 +417,25 @@ public class UsuarioWindow extends JFrame {
     correoField.setText("");
   }
 
-  public void applyThemeColor(Color themeColor) {
-    styleHelper.setPanelColor(new JPanel[]{panel,mainPanel,headerPanel,inputPanel,buttonPanel},themeColor);
+  public void applyBackgroundColor(Color backgroundColor) {
+    StyleHelper.setBackgroundColor(new JPanel[]{panel,mainPanel,headerPanel,inputPanel,buttonPanel},backgroundColor);
   }
 
   public void applyButtonColor(Color buttonColor) {
-    styleHelper.setElementColor(new JButton[]{addButton,editButton,deleteButton,saveButton,pdfButton,exitEditModeButton},buttonColor);
+    StyleHelper.setBackgroundColor(new JButton[]{addButton,editButton,deleteButton,saveButton,pdfButton,exitEditModeButton},buttonColor);
   }
 
   public void applyFontColor(Color fontColor) {
-    styleHelper.setLabelTextColor(new JLabel[]{titleLabel},fontColor);
-    styleHelper.setButtonTextColor(new JButton[]{addButton,editButton,deleteButton,saveButton,pdfButton,exitEditModeButton},fontColor);
+    StyleHelper.setFontColor(new JLabel[]{titleLabel},fontColor);
+    StyleHelper.setFontColor(new JComponent[]{addButton,editButton,deleteButton,saveButton,pdfButton,exitEditModeButton},fontColor);
+    StyleHelper.setFontColor(new JComponent[]{nombreLabel,apellidoLabel,correoLabel,contrasenaLabel,direccionLabel,telefonoLabel},fontColor);
+  }
+
+  public static UsuarioWindow getInstance() {
+    if(instance == null) {
+      instance = new UsuarioWindow();
+    }
+    return instance;
   }
 
   public static void main(String[] args) {

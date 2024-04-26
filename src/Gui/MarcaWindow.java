@@ -4,6 +4,7 @@ import Entities.Marca;
 import Factories.EntityFactory;
 import Helpers.PdfGenerator;
 import Helpers.SerialHelper;
+import Helpers.StyleHelper;
 import Helpers.TableHelper;
 import Params.MarcaParams;
 
@@ -18,6 +19,12 @@ import java.sql.SQLException;
 import java.util.Vector;
 
 public class MarcaWindow extends JFrame {
+  private static MarcaWindow instance;
+  private JPanel panel;
+  private JPanel mainPanel;
+  private JPanel headerPanel;
+  private JPanel inputPanel;
+  private JPanel buttonPanel;
   private DefaultTableModel tableModel;
   private JTable table;
   private JButton addButton;
@@ -26,6 +33,12 @@ public class MarcaWindow extends JFrame {
   private JButton pdfButton;
   private JButton saveButton;
   private JButton exitEditModeButton;
+
+  // Labels
+  private JLabel titleLabel;
+  private JLabel nombreLabel = new JLabel("Nombre:");
+  private JLabel descripcionLabel = new JLabel("Descripción:");
+  private JLabel paisLabel = new JLabel("País:");
 
   // Input fields for new marca
   private JTextField nombreField;
@@ -44,12 +57,12 @@ public class MarcaWindow extends JFrame {
     // setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setLocationRelativeTo(null);
 
-    JPanel panel = new JPanel();
+    panel = new JPanel();
     panel.setLayout(new BorderLayout());
     panel.setBorder(BorderFactory.createEmptyBorder(20, 50, 50, 50)); // Add padding
 
     // Main content panel
-    JPanel mainPanel = new JPanel();
+    mainPanel = new JPanel();
     mainPanel.setLayout(new BorderLayout());
 
     // Table to display database rows
@@ -73,7 +86,7 @@ public class MarcaWindow extends JFrame {
     mainPanel.add(scrollPane, BorderLayout.CENTER);
 
     // Buttons for CRUD operations
-    JPanel buttonPanel = new JPanel();
+    buttonPanel = new JPanel();
     addButton = new JButton("Add");
     editButton = new JButton("Edit");
     deleteButton = new JButton("Delete");
@@ -95,25 +108,25 @@ public class MarcaWindow extends JFrame {
     mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
     // Header panel for title and input
-    JPanel headerPanel = new JPanel(new BorderLayout());
+    headerPanel = new JPanel(new BorderLayout());
 
     // Title to indicate the current table
-    JLabel titleLabel = new JLabel("Marcas");
+    titleLabel = new JLabel("Marcas");
     titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
     titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
     titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
     headerPanel.add(titleLabel, BorderLayout.NORTH);
 
     // Input fields for adding new marca
-    JPanel inputPanel = new JPanel(new GridLayout(3, 2,10,5));
+    inputPanel = new JPanel(new GridLayout(3, 2,10,5));
     inputPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
-    inputPanel.add(new JLabel("Nombre:"));
+    inputPanel.add(nombreLabel);
     nombreField = new JTextField();
     inputPanel.add(nombreField);
-    inputPanel.add(new JLabel("Descripción:"));
+    inputPanel.add(descripcionLabel);
     descripcionField = new JTextField();
     inputPanel.add(descripcionField);
-    inputPanel.add(new JLabel("País:"));
+    inputPanel.add(paisLabel);
     paisField = new JTextField();
     inputPanel.add(paisField);
     headerPanel.add(inputPanel, BorderLayout.CENTER);
@@ -175,6 +188,11 @@ public class MarcaWindow extends JFrame {
         deleteMarca();
       }
     });
+
+    // Apply theme
+    applyFontColor(Theme.fontColor);
+    applyButtonColor(Theme.buttonColor);
+    applyBackgroundColor(Theme.backgroundColor);
 
     // Initialize table with sample data
     initTable();
@@ -350,6 +368,26 @@ public class MarcaWindow extends JFrame {
     nombreField.setText("");
     descripcionField.setText("");
     paisField.setText("");
+  }
+  public void applyBackgroundColor(Color backgroundColor) {
+    StyleHelper.setBackgroundColor(new JPanel[]{panel,mainPanel,headerPanel,inputPanel,buttonPanel},backgroundColor);
+  }
+
+  public void applyButtonColor(Color buttonColor) {
+    StyleHelper.setBackgroundColor(new JButton[]{addButton,editButton,deleteButton,saveButton,pdfButton,exitEditModeButton},buttonColor);
+  }
+
+  public void applyFontColor(Color fontColor) {
+    StyleHelper.setFontColor(new JLabel[]{titleLabel},fontColor);
+    StyleHelper.setFontColor(new JComponent[]{addButton,editButton,deleteButton,saveButton,pdfButton,exitEditModeButton},fontColor);
+    StyleHelper.setFontColor(new JComponent[]{nombreLabel,descripcionLabel,paisLabel},fontColor);
+  }
+
+  public static MarcaWindow getInstance() {
+    if(instance == null) {
+      instance = new MarcaWindow();
+    }
+    return instance;
   }
 
   public static void main(String[] args) {
