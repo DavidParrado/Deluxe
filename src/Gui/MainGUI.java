@@ -63,7 +63,7 @@ public class MainGUI extends JFrame {
     CategoriaButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        CategoriaWindow categoriaWindow = CategoriaWindow.getInstance();
+        categoriaWindow = CategoriaWindow.getInstance();
         categoriaWindow.setVisible(true);
       }
     });
@@ -71,7 +71,7 @@ public class MainGUI extends JFrame {
     ProductoButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        ProductoWindow productoWindow = ProductoWindow.getInstance();
+        productoWindow = ProductoWindow.getInstance();
         productoWindow.setVisible(true);
       }
     });
@@ -79,7 +79,7 @@ public class MainGUI extends JFrame {
     MarcaButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        MarcaWindow marcaWindow = MarcaWindow.getInstance();
+        marcaWindow = MarcaWindow.getInstance();
         marcaWindow.setVisible(true);
       }
     });
