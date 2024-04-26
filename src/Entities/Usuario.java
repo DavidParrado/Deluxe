@@ -1,6 +1,7 @@
 package Entities;
 
 import Database.DatabaseConnection;
+import Helpers.PasswordEncryptor;
 import Helpers.SerialHelper;
 import Params.UsuarioParams;
 
@@ -11,6 +12,7 @@ import java.util.regex.Pattern;
 public class Usuario implements Entity<UsuarioParams> {
 
   private final Connection connection;
+  private PasswordEncryptor encryptor = new PasswordEncryptor();
   public Usuario() {
     connection = DatabaseConnection.getInstance().getConnection();
   }
@@ -33,13 +35,14 @@ public class Usuario implements Entity<UsuarioParams> {
       this.validarEmail(params.correo);
       this.validarContra(params.contrasena);
       this.validarTelefono(params.telefono);
+      String contrasenaEncriptada = encryptor.encryptPassword(params.contrasena);
 
       new SerialHelper().getSerial("id_usuario", "usuario");
 
       String sql = "INSERT INTO usuario (correo,contrasena,nombre,apellido,direccion,telefono,rol) VALUES (?,?,?,?,?,?,?)";
       PreparedStatement statement = connection.prepareStatement(sql);
       statement.setString(1,params.correo);
-      statement.setString(2,params.contrasena);
+      statement.setString(2,contrasenaEncriptada);
       statement.setString(3,params.nombre);
       statement.setString(4,params.apellido);
       statement.setString(5,params.direccion);
@@ -55,7 +58,7 @@ public class Usuario implements Entity<UsuarioParams> {
   @Override
   public void update(String id, UsuarioParams params) throws Exception {
     try {
-      if( params.contrasena.length() > 0 ) this.updateContra(id,params.contrasena);
+      if(!params.contrasena.isEmpty()) this.updateContra(id,params.contrasena);
       this.validarEmail(params.correo);
       this.validarTelefono(params.telefono);
 
@@ -109,9 +112,10 @@ public class Usuario implements Entity<UsuarioParams> {
   private void updateContra(String id, String contra) throws Exception {
     try {
       this.validarContra(contra);
+      String contrasenaEncriptada = encryptor.encryptPassword(contra);
       String sql = "UPDATE usuario SET contrasena = ? WHERE id_usuario = ?";
       PreparedStatement statement = connection.prepareStatement(sql);
-      statement.setString(1,contra);
+      statement.setString(1,contrasenaEncriptada);
       statement.setInt(2,Integer.parseInt(id));
       statement.executeUpdate();
     } catch (SQLException e) {
