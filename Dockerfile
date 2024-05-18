@@ -1,5 +1,5 @@
 # Use a base image with Debian Linux
-FROM debian:bullseye
+FROM debian:latest
 
 # Set environment variables
 ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64 \
